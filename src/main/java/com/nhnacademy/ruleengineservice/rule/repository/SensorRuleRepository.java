@@ -1,6 +1,6 @@
 package com.nhnacademy.ruleengineservice.rule.repository;
 
-import com.nhnacademy.ruleengineservice.rule.dto.SensorRuleDto;
+import com.nhnacademy.ruleengineservice.rule.domain.SensorRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class SensorRuleRepository {
 
-    private final RedisTemplate<String, SensorRuleDto> redisTemplate;
+    private final RedisTemplate<String, SensorRule> redisTemplate;
 
     @Autowired
-    public SensorRuleRepository(RedisTemplate<String, SensorRuleDto> redisTemplate) {
+    public SensorRuleRepository(RedisTemplate<String, SensorRule> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -21,12 +21,12 @@ public class SensorRuleRepository {
     }
 
     // 룰 저장
-    public void saveRule(String sensorId, String sensorType, SensorRuleDto ruleDto) {
+    public void saveRule(String sensorId, String sensorType, SensorRule ruleDto) {
         redisTemplate.opsForValue().set(generateKey(sensorId, sensorType), ruleDto);
     }
 
     // 룰 조회
-    public SensorRuleDto getRule(String sensorId, String sensorType) {
+    public SensorRule getRule(String sensorId, String sensorType) {
         return redisTemplate.opsForValue().get(generateKey(sensorId, sensorType));
     }
 
@@ -37,6 +37,6 @@ public class SensorRuleRepository {
 
     // 키 존재 여부 확인
     public boolean exists(String sensorId, String sensorType) {
-        return redisTemplate.hasKey(generateKey(sensorId, sensorType));
+        return Boolean.TRUE.equals(redisTemplate.hasKey(generateKey(sensorId, sensorType)));
     }
 }
