@@ -1,10 +1,10 @@
-package com.nhnacademy.ruleengineservice.rule.repository;
+package com.nhnacademy.ruleengineservice.sensorrule.repository;
 
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.enums.SensorType;
-import com.nhnacademy.ruleengineservice.rule.domain.SensorRule;
+import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,6 +1,6 @@
-package com.nhnacademy.ruleengineservice.rule.repository;
+package com.nhnacademy.ruleengineservice.sensorrule.repository;
 
-import com.nhnacademy.ruleengineservice.rule.domain.SensorRule;
+import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;

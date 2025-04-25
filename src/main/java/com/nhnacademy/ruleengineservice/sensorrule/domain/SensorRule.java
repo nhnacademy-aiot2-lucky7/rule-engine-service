@@ -1,4 +1,4 @@
-package com.nhnacademy.ruleengineservice.rule.domain;
+package com.nhnacademy.ruleengineservice.sensorrule.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nhnacademy.ruleengineservice.enums.ActionType;

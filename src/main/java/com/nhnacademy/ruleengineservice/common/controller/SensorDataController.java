@@ -1,7 +1,7 @@
 package com.nhnacademy.ruleengineservice.common.controller;
 
 import com.nhnacademy.ruleengineservice.datatype.cache.DataCache;
-import com.nhnacademy.ruleengineservice.rule.repository.SensorRuleRepository;
+import com.nhnacademy.ruleengineservice.sensorrule.repository.SensorRuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ruleEngine")
-public class DataController {
+public class SensorDataController {
 
     private final DataCache dataCache;
     private final SensorRuleRepository sensorRuleRepository;
@@ -30,6 +30,6 @@ public class DataController {
         String SensorId = (String) payload.get("sensorId");
         String datatype = (String) payload.get("dataType");
 
-        sensorRuleRepository.
+
     }
 }
