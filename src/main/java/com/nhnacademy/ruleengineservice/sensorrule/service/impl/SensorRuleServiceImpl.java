@@ -1,3 +1,4 @@
+/*
 package com.nhnacademy.ruleengineservice.sensorrule.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,3 +26,4 @@ public class SensorRuleServiceImpl implements SensorRuleService {
 
     }
 }
+*/

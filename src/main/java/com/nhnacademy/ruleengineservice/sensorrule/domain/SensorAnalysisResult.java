@@ -1,3 +1,4 @@
+/*
 package com.nhnacademy.ruleengineservice.sensorrule.domain;
 
 import jakarta.persistence.*;
@@ -36,3 +37,4 @@ public class SensorAnalysisResult {
     @Comment("값")
     private Double value;
 }
+*/

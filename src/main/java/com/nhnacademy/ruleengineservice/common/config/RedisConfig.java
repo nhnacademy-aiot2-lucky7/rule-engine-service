@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.nhnacademy.ruleengineservice.redis.provider.RedisProvider;
+import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -45,8 +46,16 @@ public class RedisConfig {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisEnvProvider.getRedisHost());
         config.setPort(redisEnvProvider.getRedisPort());
-        config.setPassword(RedisPassword.of(redisEnvProvider.getRedisPassword()));
+
+        // 비밀번호가 null일 경우, 설정하지 않도록 처리
+        String password = redisEnvProvider.getRedisPassword();
+        if (password != null) {
+            config.setPassword(RedisPassword.of(password));
+        }
+
+        // 로컬 환경에서 데이터베이스 번호는 기본값 사용
         config.setDatabase(redisEnvProvider.getRedisDatabase());
+
         return new LettuceConnectionFactory(config);
     }
 
@@ -89,4 +98,33 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
+
+    @Bean
+    public RedisTemplate<String, SensorRule> sensorRuleRedisTemplate(LettuceConnectionFactory connectionFactory) {
+        RedisTemplate<String, SensorRule> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        // Key는 String
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+
+        // Value는 SensorRule
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+
+        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("com.nhnacademy.ruleengineservice") // SensorRule 패키지 포함
+                .build();
+
+        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
+
+        Jackson2JsonRedisSerializer<SensorRule> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, SensorRule.class);
+
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+
+        template.afterPropertiesSet();
+        return template;
+    }
+
 }

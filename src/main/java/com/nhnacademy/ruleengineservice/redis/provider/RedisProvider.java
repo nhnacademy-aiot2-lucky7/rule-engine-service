@@ -4,6 +4,7 @@ package com.nhnacademy.ruleengineservice.redis.provider;
 import com.nhnacademy.ruleengineservice.common.exception.InvalidRedisConfigException;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
  *
  * <p>호스트, 포트, 비밀번호를 안전하게 로드하며, 값이 없거나 포트 값이 숫자가 아닌 경우 예외를 발생시킵니다.</p>
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisProvider {
@@ -33,7 +35,7 @@ public class RedisProvider {
      * @throws InvalidRedisConfigException 호스트 설정값이 존재하지 않는 경우
      */
     public String getRedisHost() {
-        return getProperty("REDIS_HOST", "redis.host");
+        return getProperty("REDIS_HOST", "redis.host", "localhost");
     }
 
     /**
@@ -43,7 +45,7 @@ public class RedisProvider {
      * @throws InvalidRedisConfigException 비밀번호 설정값이 존재하지 않는 경우
      */
     public String getRedisPassword() {
-        return getProperty("REDIS_PASSWORD", "redis.password");
+        return getProperty("REDIS_PASSWORD", "redis.password", null);
     }
 
     /**
@@ -53,7 +55,7 @@ public class RedisProvider {
      * @throws InvalidRedisConfigException 포트가 설정되지 않았거나 숫자가 아닌 경우
      */
     public int getRedisPort() {
-        String value = getProperty("REDIS_PORT", "redis.port");
+        String value = getProperty("REDIS_PORT", "redis.port", "6379");
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
@@ -68,7 +70,7 @@ public class RedisProvider {
      * @throws InvalidRedisConfigException DB 번호가 숫자가 아닐 경우
      */
     public int getRedisDatabase() {
-        String value = getProperty("REDIS_DATABASE", "redis.database");
+        String value = getProperty("REDIS_DATABASE", "redis.database", "0");
 
         try {
             return Integer.parseInt(value);
@@ -87,7 +89,7 @@ public class RedisProvider {
      * @return 설정된 값
      * @throws InvalidRedisConfigException 값이 존재하지 않는 경우
      */
-    private String getProperty(String dotenvKey, String envKey) {
+    private String getProperty(String dotenvKey, String envKey, String defaultValue) {
         String value = dotenv.get(dotenvKey);
 
         if (value == null) {
@@ -95,12 +97,16 @@ public class RedisProvider {
         }
 
         if (value == null) {
-            value = System.getenv(dotenvKey); // 마지막 fallback
+            value = System.getenv(dotenvKey);
         }
 
         if (value == null) {
-            throw new InvalidRedisConfigException(dotenvKey + " or " + envKey + "가 설정되지 않았습니다.");
+            value = defaultValue; // 기본값 적용
         }
+
+        /*if (value == null) {
+            throw new InvalidRedisConfigException(dotenvKey + " or " + envKey + "가 설정되지 않았습니다.");
+        }*/
         return value;
     }
 }

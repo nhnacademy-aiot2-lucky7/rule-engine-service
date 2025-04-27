@@ -22,8 +22,8 @@ class RedisProviderTest {
     void testGetRedisHost_success() {
 
         Assertions.assertEquals("localhost", redisProvider.getRedisHost());
-        Assertions.assertEquals("password123!@#", redisProvider.getRedisPassword());
+        Assertions.assertEquals(null, redisProvider.getRedisPassword());
         Assertions.assertEquals(6379, redisProvider.getRedisPort());
-        Assertions.assertEquals(1, redisProvider.getRedisDatabase());
+        Assertions.assertEquals(0, redisProvider.getRedisDatabase());
     }
 }

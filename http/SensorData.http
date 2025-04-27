@@ -1,0 +1,13 @@
+### 센서에서 들어오는 데이터 확인
+POST http://localhost:8080/ruleEngine/data
+Content-Type: application/json
+
+{
+  "data": {
+    "sensorId": "sensor1",
+    "datatype": "temperature",
+    "desc": "온도",
+    "place": "하이브",
+    "value": 30
+  }
+}
