@@ -66,11 +66,11 @@ public class RedisConfig {
      * </p>
      *
      * @param connectionFactory LettuceConnectionFactory 객체
-     * @return RedisTemplate<String, Object> 객체
+     * @return RedisTemplate<String, SensorRule> 객체
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(LettuceConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
+    public RedisTemplate<String, SensorRule> redisTemplate(LettuceConnectionFactory connectionFactory) {
+        RedisTemplate<String, SensorRule> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
         // 문자열 Key 직렬화
@@ -89,7 +89,7 @@ public class RedisConfig {
         objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
 
         // 직렬화기 생성 시 ObjectMapper 전달
-        Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+        Jackson2JsonRedisSerializer<SensorRule> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, SensorRule.class);
 
         // Value 직렬화기 설정
         template.setValueSerializer(serializer);

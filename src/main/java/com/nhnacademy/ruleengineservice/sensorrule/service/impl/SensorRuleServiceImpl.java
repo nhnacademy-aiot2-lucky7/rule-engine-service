@@ -1,29 +1,84 @@
-/*
 package com.nhnacademy.ruleengineservice.sensorrule.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorAnalysisResult;
-import com.nhnacademy.ruleengineservice.sensorrule.repository.SensorAnalysisResultRepository;
+import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
+import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SensorRuleServiceImpl implements SensorRuleService {
 
-    private final SensorAnalysisResultRepository resultRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final ObjectMapper objectMapper;
+    private final RedisTemplate<String, SensorRule> redisTemplate;
 
-    public void saveSensorRules(Long id) {
-        SensorAnalysisResult analysisResult = resultRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 분석 결과 없음"));
+    public void saveSensorRules(String deviceId, String dataType, Rule newRule) {
+        String key = "rule:sensor:" + deviceId + ":" + dataType;
 
-        String key = String.format("rule:sensor:%s:%s", analysisResult.getSensorId(), analysisResult.getDataType());
+        // Redis에서 SensorRule을 찾음
+        SensorRule findSensorRule = redisTemplate.opsForValue().get(key);
+        if (findSensorRule != null) {
+            // 기존 룰 업데이트 로직
+            updateOrAddRule(findSensorRule.getRules(), newRule);
 
-
+            // 수정된 SensorRule을 다시 Redis에 저장
+            redisTemplate.opsForValue().set(key, findSensorRule);
+        } else {
+            // 새로 룰이 없으면 추가하는 로직
+            createAndSaveNewSensorRule(key, newRule);
+        }
     }
+
+    // 룰 업데이트 또는 추가
+    private void updateOrAddRule(List<Rule> rules, Rule newRule) {
+        boolean ruleUpdated = false;
+
+        // 기존 룰을 찾아서 업데이트
+        for (int i = 0; i < rules.size(); i++) {
+            Rule rule = rules.get(i);
+
+            // dataType, operator, action이 같고, value 또는 range가 다르면 추가
+            if (rule.equals(newRule)) {
+                // 완전히 같은 룰이면 수정할 필요 없음
+                return; // 중복된 룰은 처리 안 함
+            } else if (rule.getDatatype().equals(newRule.getDatatype()) &&
+                    rule.getOperator().equals(newRule.getOperator()) &&
+                    rule.getAction().equals(newRule.getAction())) {
+                // dataType, operator, action이 같고 값이나 범위가 다르면 업데이트
+                rules.set(i, newRule); // 기존 룰을 새로운 룰로 교체
+                ruleUpdated = true; // 업데이트 되었으므로 flag 설정
+                break; // 한 개만 업데이트하고 종료
+            }
+        }
+
+        // 룰이 없으면 추가
+        if (!ruleUpdated) {
+            rules.add(newRule); // 룰을 추가
+        }
+    }
+
+    public List<Rule> getRulesByKey(String deviceId, String dataType) {
+        String key = "rule:sensor:" + deviceId + ":" + dataType;
+
+        // Redis에서 SensorRule을 찾음
+        SensorRule sensorRule = redisTemplate.opsForValue().get(key);
+
+        if (sensorRule == null) {
+            throw new IllegalArgumentException("No rules found for deviceId: " + deviceId + " and dataType: " + dataType);
+        }
+
+        // 해당하는 룰들을 반환
+        return sensorRule.getRules();
+    }
+
+
+    // 새 SensorRule을 생성하고 저장하는 로직
+    private void createAndSaveNewSensorRule(String key, Rule newRule) {
+        SensorRule sensorRule = SensorRule.ofNewRule(key, newRule);
+        redisTemplate.opsForValue().set(key, sensorRule);
+    }
+
 }
-*/
