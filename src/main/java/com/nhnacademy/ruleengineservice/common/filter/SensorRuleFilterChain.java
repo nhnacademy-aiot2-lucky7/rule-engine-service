@@ -1,55 +1,61 @@
 package com.nhnacademy.ruleengineservice.common.filter;
 
+import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
-import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
-@AllArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class SensorRuleFilterChain {
 
-    private final List<Predicate<Map<String, Object>>> filters = new ArrayList<>();
     private final SensorRuleService sensorRuleService;
 
-    public SensorRuleFilterChain addFilter(SensorRule rule) {
-        filters.add(sensorData -> matchRule(rule, sensorData));
-        return this;
-    }
-
     public boolean filter(Map<String, Object> sensorData) {
-        return filters.stream()
-                .allMatch(predicate -> predicate.test(sensorData));
+        return matchAllRules(sensorData);
     }
 
     // 주어진 sensorData가 rule에 맞는지 체크
-    private boolean matchRule(Rule rule, Map<String, Object> sensorData) {
-        // sensorData에서 필드 추출 (예: "datatype", "value" 등)
+    public boolean matchAllRules(Map<String, Object> sensorData) {
         String deviceId = (String) sensorData.get("deviceId");
         String dataType = (String) sensorData.get("datatype");
-        Object value = sensorData.get("value");
 
+        Double sensorValue = (Double) sensorData.get("value");
+
+        /*double sensorValue;
+        // 1. dataValue를 double로 변환
+        if (dataValue instanceof Number) {
+            sensorValue = ((Number) dataValue).doubleValue();
+        } else if (dataValue instanceof String) {
+            try {
+                sensorValue = Double.parseDouble((String) dataValue);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("숫자 형식이 잘못된 문자열입니다: " + dataValue);
+            }
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 데이터 타입입니다: " + dataValue.getClass());
+        }*/
+
+        // 해당 deviceId + dataType에 대한 룰들 조회
         List<Rule> ruleList = sensorRuleService.getRulesByKey(deviceId, dataType);
 
+        for (Rule rule : ruleList) {
+            double targetValue = rule.getValue(); // 이미 해당 ruletype의 값만 있으니 바로 사용
+            Operator operator = rule.getOperator();
 
+            boolean passed = operator.compare(sensorValue, targetValue);
 
-        // 데이터 타입과 값이 룰과 일치하는지 확인
-        if (dataType != null && dataType.equals(rule.getDatatype().toString())) {
-            if (rule.getOperator().equals("equals") && value != null && value.equals(rule.getValue())) {
-                return true;
-            } else if (rule.getOperator().equals("range") && value != null && value instanceof Double) {
-                Double doubleValue = (Double) value;
-                if (doubleValue >= (Double) rule.getValue() && doubleValue <= (Double) range) {
-                    return true;
-                }
+            System.out.printf("▶ Rule 검사중 - 타입: %s, 연산자: %s, 기준값: %.2f, 센서값: %.2f → 결과: %s%n",
+                    rule.getRuletype(), operator.getSymbol(), targetValue, sensorValue, passed ? "통과" : "불통");
+
+            if (!passed) {
+                return false; // 하나라도 실패하면 전체 실패
             }
         }
-
-        // 필터링 조건에 맞지 않으면 false
-        return false;
+        return true; // 모든 룰을 통과했으면 true
     }
 }

@@ -1,5 +1,6 @@
 package com.nhnacademy.ruleengineservice.sensorrule.service.impl;
 
+import com.nhnacademy.ruleengineservice.common.exception.SensorRuleNotFoundException;
 import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
 import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleService;
@@ -66,9 +67,9 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         // Redis에서 SensorRule을 찾음
         SensorRule sensorRule = redisTemplate.opsForValue().get(key);
 
-        if (sensorRule == null) {
-            throw new IllegalArgumentException("No rules found for deviceId: " + deviceId + " and dataType: " + dataType);
-        }
+//        if (sensorRule == null) {
+//            throw new SensorRuleNotFoundException(deviceId, dataType);
+//        }
 
         // 해당하는 룰들을 반환
         return sensorRule.getRules();
@@ -77,6 +78,9 @@ public class SensorRuleServiceImpl implements SensorRuleService {
 
     // 새 SensorRule을 생성하고 저장하는 로직
     private void createAndSaveNewSensorRule(String key, Rule newRule) {
+        System.out.println(">> redisTemplate = " + redisTemplate);
+        System.out.println(">> redisTemplate.opsForValue() = " + redisTemplate.opsForValue());
+
         SensorRule sensorRule = SensorRule.ofNewRule(key, newRule);
         redisTemplate.opsForValue().set(key, sensorRule);
     }
