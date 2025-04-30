@@ -37,9 +37,10 @@ class SensorRuleServiceImplTest {
     private Rule existingRule;
     private Rule newRule;
     private SensorRule sensorRule;
+    private String gatewayId = "gateway1";
     private String deviceId = "sensor1";
     private String dataType = "temperature";
-    private String key = "rule:sensor:" + deviceId + ":" + dataType;
+    private String key = "rule:gateway:" + gatewayId + ":sensor:" + deviceId + ":" + dataType;
 
     @BeforeEach
     void setUp() {
@@ -71,7 +72,7 @@ class SensorRuleServiceImplTest {
         when(valueOperations.get(key)).thenReturn(null); // 기존 룰이 없을 때
 
         // 새 룰을 추가하는 메서드 호출
-        sensorRuleService.saveSensorRules(deviceId, dataType, newRule);
+        sensorRuleService.saveSensorRules(gatewayId, deviceId, dataType, newRule);
 
         // 새 SensorRule이 Redis에 저장된 것을 검증
         verify(redisTemplate.opsForValue()).set(eq(key), any(SensorRule.class));
@@ -85,7 +86,7 @@ class SensorRuleServiceImplTest {
         when(valueOperations.get(key)).thenReturn(sensorRule); // 기존 룰이 있을 때
 
         // 기존 룰을 업데이트하는 메서드 호출
-        sensorRuleService.saveSensorRules(deviceId, dataType, newRule);
+        sensorRuleService.saveSensorRules(gatewayId, deviceId, dataType, newRule);
 
         // 수정된 룰이 Redis에 저장된 것을 검증
         verify(redisTemplate.opsForValue()).set(eq(key), any(SensorRule.class));
@@ -99,7 +100,7 @@ class SensorRuleServiceImplTest {
         when(valueOperations.get(key)).thenReturn(sensorRule); // 룰이 있을 때
 
         // 룰을 조회하는 메서드 호출
-        List<Rule> rules = sensorRuleService.getRulesByKey(deviceId, dataType);
+        List<Rule> rules = sensorRuleService.getRulesByKey(gatewayId, deviceId, dataType);
 
         // 룰이 잘 조회되는지 검증
         assertNotNull(rules);
@@ -115,7 +116,7 @@ class SensorRuleServiceImplTest {
 
         // 예외가 발생하는지 확인
         SensorRuleNotFoundException exception = assertThrows(SensorRuleNotFoundException.class, () -> {
-            sensorRuleService.getRulesByKey(deviceId, dataType);
+            sensorRuleService.getRulesByKey(gatewayId, deviceId, dataType);
         });
 
         // 예외 메시지 검증

@@ -7,29 +7,37 @@ import lombok.Value;
 @Value
 public class DataDTO {
 
-    String deviceId;
+    String gatewayId;
 
-    String dataType;
+    String sensorId;
 
     String location;
 
-    Object value;
+    String spot;
 
-    long time;
+    String dataType;
+
+    double value;
+
+    long timestamp;
 
 
     @JsonCreator
     public DataDTO(
-            @JsonProperty("deviceId") String deviceId,
-            @JsonProperty("dataType") String dataType,
+            @JsonProperty("gateway-id") String gatewayId,
+            @JsonProperty("sensor-id") String sensorId,
             @JsonProperty("location") String location,
-            @JsonProperty("value") Object value,
-            @JsonProperty("time") long time
+            @JsonProperty("spot") String spot,
+            @JsonProperty("type") String dataType,
+            @JsonProperty("value") double value,
+            @JsonProperty("timestamp") long timestamp
     ) {
-        this.deviceId = deviceId;
-        this.dataType = dataType;
+        this.gatewayId = gatewayId;
+        this.sensorId = sensorId;
         this.location = location;
+        this.spot = spot;
+        this.dataType = dataType;
         this.value = value;
-        this.time = time;
+        this.timestamp = timestamp;
     }
 }

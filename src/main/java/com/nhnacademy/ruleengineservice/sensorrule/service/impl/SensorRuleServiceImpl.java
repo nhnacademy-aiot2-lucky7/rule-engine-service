@@ -16,8 +16,8 @@ public class SensorRuleServiceImpl implements SensorRuleService {
 
     private final RedisTemplate<String, SensorRule> redisTemplate;
 
-    public void saveSensorRules(String deviceId, String dataType, Rule newRule) {
-        String key = "rule:sensor:" + deviceId + ":" + dataType;
+    public void saveSensorRules(String gatewayId, String sensorId, String dataType, Rule newRule) {
+        String key = "rule:gateway:" + gatewayId + ":sensor:" + sensorId + ":" + dataType;
 
         // Redis에서 SensorRule을 찾음
         SensorRule findSensorRule = redisTemplate.opsForValue().get(key);
@@ -61,20 +61,19 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         }
     }
 
-    public List<Rule> getRulesByKey(String deviceId, String dataType) {
-        String key = "rule:sensor:" + deviceId + ":" + dataType;
+    public List<Rule> getRulesByKey(String gatewayId, String sensorId, String dataType) {
+        String key = "rule:gateway:" + gatewayId + ":sensor:" + sensorId + ":" + dataType;
 
         // Redis에서 SensorRule을 찾음
         SensorRule sensorRule = redisTemplate.opsForValue().get(key);
 
-//        if (sensorRule == null) {
-//            throw new SensorRuleNotFoundException(deviceId, dataType);
-//        }
+        if (sensorRule == null) {
+            throw new SensorRuleNotFoundException(sensorId, dataType);
+        }
 
         // 해당하는 룰들을 반환
         return sensorRule.getRules();
     }
-
 
     // 새 SensorRule을 생성하고 저장하는 로직
     private void createAndSaveNewSensorRule(String key, Rule newRule) {
