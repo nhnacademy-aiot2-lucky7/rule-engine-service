@@ -10,7 +10,6 @@ import com.nhnacademy.ruleengineservice.message.service.MessageService;
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
     private final WebClient webClient;
-    private final MessageService messageService;
 
     @Override
     public void send(ViolatedRuleMessageDTO violatedRuleMessageDTO) {

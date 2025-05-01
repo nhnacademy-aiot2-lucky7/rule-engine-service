@@ -1,4 +1,4 @@
-package com.nhnacademy.ruleengineservice.sensorrule.dto;
+package com.nhnacademy.ruleengineservice.sensordata.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,10 +11,6 @@ public class DataDTO {
 
     String sensorId;
 
-    String location;
-
-    String spot;
-
     String dataType;
 
     double value;
@@ -26,16 +22,12 @@ public class DataDTO {
     public DataDTO(
             @JsonProperty("gateway-id") String gatewayId,
             @JsonProperty("sensor-id") String sensorId,
-            @JsonProperty("location") String location,
-            @JsonProperty("spot") String spot,
             @JsonProperty("type") String dataType,
             @JsonProperty("value") double value,
             @JsonProperty("timestamp") long timestamp
     ) {
         this.gatewayId = gatewayId;
         this.sensorId = sensorId;
-        this.location = location;
-        this.spot = spot;
         this.dataType = dataType;
         this.value = value;
         this.timestamp = timestamp;

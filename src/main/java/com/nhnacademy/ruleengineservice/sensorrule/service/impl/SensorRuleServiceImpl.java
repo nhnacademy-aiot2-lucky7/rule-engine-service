@@ -5,11 +5,13 @@ import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
 import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SensorRuleServiceImpl implements SensorRuleService {
@@ -77,8 +79,8 @@ public class SensorRuleServiceImpl implements SensorRuleService {
 
     // 새 SensorRule을 생성하고 저장하는 로직
     private void createAndSaveNewSensorRule(String key, Rule newRule) {
-        System.out.println(">> redisTemplate = " + redisTemplate);
-        System.out.println(">> redisTemplate.opsForValue() = " + redisTemplate.opsForValue());
+        log.debug(">> redisTemplate = {}", redisTemplate);
+        log.debug(">> redisTemplate.opsForValue() = {}", redisTemplate.opsForValue());
 
         SensorRule sensorRule = SensorRule.ofNewRule(key, newRule);
         redisTemplate.opsForValue().set(key, sensorRule);

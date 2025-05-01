@@ -10,7 +10,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient() {
         return WebClient.builder()
-                .baseUrl("http://message-service")
+                .baseUrl("http://localhost:8080")
                 .build();
     }
 }
