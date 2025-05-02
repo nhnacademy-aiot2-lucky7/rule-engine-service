@@ -13,16 +13,16 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SensorRule {
-    private String gatewayIdAndDeviceIdAndType;
+    private String gatewayIdAndSensorIdAndType;
     private List<Rule> rules = new ArrayList<>();
 
-    private SensorRule(String gatewayIdAndDeviceIdAndType, Rule rule) {
-        this.gatewayIdAndDeviceIdAndType = gatewayIdAndDeviceIdAndType;
+    private SensorRule(String gatewayIdAndSensorIdAndType, Rule rule) {
+        this.gatewayIdAndSensorIdAndType = gatewayIdAndSensorIdAndType;
         this.rules.add(rule);
     }
 
-    public static SensorRule ofNewRule(String gatewayIdAndDeviceIdAndType, Rule rule) {
-        return new SensorRule(gatewayIdAndDeviceIdAndType, rule);
+    public static SensorRule ofNewRule(String gatewayIdAndSensorIdAndType, Rule rule) {
+        return new SensorRule(gatewayIdAndSensorIdAndType, rule);
     }
 
     // 여러 룰을 추가할 수 있는 메소드

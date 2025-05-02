@@ -19,6 +19,7 @@ public class SensorDataController {
 
     @PostMapping("/data")
     public void receiveSensorData(@RequestBody DataDTO dataDTO) {
+        log.info("[{}]", dataDTO);
         processorService.process(dataDTO);
     }
 }

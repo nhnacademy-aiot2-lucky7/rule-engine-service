@@ -1,35 +1,25 @@
 package com.nhnacademy.ruleengineservice.sensordata.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Value;
 
 @Value
+@AllArgsConstructor
 public class DataDTO {
 
+    @JsonProperty("gateway_id")
     String gatewayId;
 
+    @JsonProperty("sensor_id")
     String sensorId;
 
+    @JsonProperty("type")
     String dataType;
 
-    double value;
+    @JsonProperty("value")
+    Double value;
 
-    long timestamp;
-
-
-    @JsonCreator
-    public DataDTO(
-            @JsonProperty("gateway-id") String gatewayId,
-            @JsonProperty("sensor-id") String sensorId,
-            @JsonProperty("type") String dataType,
-            @JsonProperty("value") double value,
-            @JsonProperty("timestamp") long timestamp
-    ) {
-        this.gatewayId = gatewayId;
-        this.sensorId = sensorId;
-        this.dataType = dataType;
-        this.value = value;
-        this.timestamp = timestamp;
-    }
+    @JsonProperty("timestamp")
+    Long timestamp;
 }
