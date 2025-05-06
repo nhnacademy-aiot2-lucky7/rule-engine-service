@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/ruleEngine")
+@RequestMapping("/rule_engine")
 public class SensorDataController {
 
     private final SensorDataProcessorService processorService;
@@ -35,7 +35,7 @@ public class SensorDataController {
      */
     @PostMapping("/data")
     public void receiveSensorData(@RequestBody DataDTO dataDTO) {
-        log.info("[{}]", dataDTO);
+        log.info("수신 데이터: [{}]", dataDTO);
         processorService.process(dataDTO);
     }
 }

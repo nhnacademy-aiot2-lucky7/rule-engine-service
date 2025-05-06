@@ -1,6 +1,6 @@
 package com.nhnacademy.ruleengineservice.sensordata.service.impl;
 
-import com.nhnacademy.ruleengineservice.common.filter.SensorRuleViolationChecker;
+import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleViolationService;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
 import com.nhnacademy.ruleengineservice.message.service.MessageService;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SensorDataProcessorServiceImpl implements SensorDataProcessorService {
 
-    private final SensorRuleViolationChecker violationChecker;
+    private final SensorRuleViolationService violationService;
     private final MessageService messageService;
 
     /**
@@ -36,9 +36,7 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
      */
     @Override
     public void process(DataDTO dataDTO) {
-        Map<String, Object> sensorData = convertDataDTOToMap(dataDTO);
-
-        List<Rule> violatedRules = violationChecker.getViolatedRules(sensorData);
+        List<Rule> violatedRules = violationService.getViolatedRules(dataDTO);
 
         if (!violatedRules.isEmpty()) {
             ViolatedRuleMessageDTO dto = new ViolatedRuleMessageDTO(
@@ -53,20 +51,5 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
         } else {
             log.debug("센서 데이터가 모든 룰을 통과했습니다!");
         }
-    }
-
-    /**
-     * {@code DataDTO}를 {@code Map} 형식으로 변환합니다.
-     *
-     * @param dataDTO 변환할 데이터 DTO
-     * @return 변환된 센서 데이터 {@code Map}
-     */
-    public Map<String, Object> convertDataDTOToMap(DataDTO dataDTO) {
-        Map<String, Object> sensorData = new HashMap<>();
-        sensorData.put("gatewayId", dataDTO.getGatewayId());
-        sensorData.put("sensorId", dataDTO.getSensorId());
-        sensorData.put("dataType", dataDTO.getDataType());
-        sensorData.put("value", dataDTO.getValue());
-        return sensorData;
     }
 }

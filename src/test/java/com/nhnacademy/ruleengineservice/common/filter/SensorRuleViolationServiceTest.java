@@ -2,8 +2,10 @@ package com.nhnacademy.ruleengineservice.common.filter;
 
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
+import com.nhnacademy.ruleengineservice.sensordata.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
 import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleService;
+import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleViolationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,16 +14,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
-class SensorRuleViolationCheckerTest {
+class SensorRuleViolationServiceTest {
 
     @InjectMocks
-    private SensorRuleViolationChecker sensorRuleViolationChecker;
+    private SensorRuleViolationService sensorRuleViolationService;
 
     @Mock
     private SensorRuleService sensorRuleService;
@@ -42,11 +45,13 @@ class SensorRuleViolationCheckerTest {
         String dataType = "temperature";
         double sensorValue = 26.5;
 
-        Map<String, Object> sensorData = new HashMap<>();
-        sensorData.put("gatewayId", gatewayId);
-        sensorData.put("sensorId", sensorId);
-        sensorData.put("dataType", dataType);
-        sensorData.put("value", sensorValue);
+        DataDTO dataDTO = new DataDTO(
+                gatewayId,
+                sensorId,
+                dataType,
+                sensorValue,
+                20250505L
+        );
 
         when(sensorRuleService.getRulesByKey(gatewayId, sensorId, dataType)).thenReturn(List.of(rule));
 
@@ -57,7 +62,7 @@ class SensorRuleViolationCheckerTest {
 
         boolean comparisonResult = Operator.LESS_THAN.compare(sensorValue, 20.0); // 실제 비교 작업
 
-        List<Rule> violatedRules = sensorRuleViolationChecker.getViolatedRules(sensorData);
+        List<Rule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
         Assertions.assertFalse(comparisonResult);
         Assertions.assertTrue(violatedRules.isEmpty());
@@ -75,11 +80,14 @@ class SensorRuleViolationCheckerTest {
         String dataType = "temperature";
         double sensorValue = 70.0;
 
-        Map<String, Object> sensorData = new HashMap<>();
-        sensorData.put("gatewayId", gatewayId);
-        sensorData.put("sensorId", sensorId);
-        sensorData.put("dataType", dataType);
-        sensorData.put("value", sensorValue);
+
+        DataDTO dataDTO = new DataDTO(
+                gatewayId,
+                sensorId,
+                dataType,
+                sensorValue,
+                20250505L
+        );
 
         when(sensorRuleService.getRulesByKey(gatewayId, sensorId, dataType)).thenReturn(List.of(rule)); // 룰 리스트 반환
         when(rule.getValue()).thenReturn(60.0); // 기준값 설정
@@ -89,7 +97,7 @@ class SensorRuleViolationCheckerTest {
 
         boolean comparisonResult = Operator.GREATER_THAN.compare(sensorValue, 60.0);
 
-        List<Rule> violatedRules = sensorRuleViolationChecker.getViolatedRules(sensorData);
+        List<Rule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
         Assertions.assertTrue(comparisonResult);
         Assertions.assertFalse(violatedRules.isEmpty());

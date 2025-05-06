@@ -1,9 +1,9 @@
-package com.nhnacademy.ruleengineservice.common.filter;
+package com.nhnacademy.ruleengineservice.sensorrule.service;
 
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
+import com.nhnacademy.ruleengineservice.sensordata.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
-import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,22 +22,21 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SensorRuleViolationChecker {
+public class SensorRuleViolationService {
 
     private final SensorRuleService sensorRuleService;
 
     /**
      * 주어진 센서 데이터를 기반으로 위반된 룰 목록을 반환합니다.
      *
-     * @param sensorData 센서 데이터 Map (gatewayId, sensorId, dataType, value 포함)
+     * @param dataDTO 센서 데이터 (gatewayId, sensorId, dataType, value 포함)
      * @return 위반된 {@link Rule} 객체 리스트
      */
-    public List<Rule> getViolatedRules(Map<String, Object> sensorData) {
-        String gatewayId = (String) sensorData.get("gatewayId");
-        String sensorId = (String) sensorData.get("sensorId");
-        String dataType = (String) sensorData.get("dataType");
-        Double sensorValue = (Double) sensorData.get("value");
-
+    public List<Rule> getViolatedRules(DataDTO dataDTO) {
+        String gatewayId = dataDTO.getGatewayId();
+        String sensorId = dataDTO.getSensorId();
+        String dataType = dataDTO.getDataType();
+        Double sensorValue = dataDTO.getValue();
 
         List<Rule> rules = sensorRuleService.getRulesByKey(gatewayId, sensorId, dataType);
 
@@ -47,12 +46,12 @@ public class SensorRuleViolationChecker {
                     Operator operator = rule.getOperator();
                     double targetValue = rule.getValue();
                     boolean passed = operator.compare(sensorValue, targetValue);
-                    log.info(String.format("▶ Rule 위반검사 - 타입: %s, 연산자: %s, 기준값: %.2f, 센서값: %.2f → 결과: %s%n",
+                    log.info("▶ Rule 위반검사 - 타입: {}, 연산자: {}, 기준값: {}, 센서값: {} → 결과: {}",
                             ruleType,
                             operator.getSymbol(),
-                            targetValue,
-                            sensorValue,
-                            !passed ? "통과" : "위반"));
+                            String.format("%.2f", targetValue),
+                            String.format("%.2f", sensorValue),
+                            !passed ? "통과" : "위반");
                     return passed;
                 })
                 .toList();
