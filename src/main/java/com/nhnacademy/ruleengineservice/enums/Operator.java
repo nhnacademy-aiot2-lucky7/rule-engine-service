@@ -8,8 +8,6 @@ package com.nhnacademy.ruleengineservice.enums;
  * <ul>
  *     <li>{@code GREATER_THAN} - 센서 값이 기준 값보다 큰 경우</li>
  *     <li>{@code LESS_THAN} - 센서 값이 기준 값보다 작은 경우</li>
- *     <li>{@code GREATER_THAN_OR_EQUAL} - 센서 값이 기준 값보다 크거나 같은 경우</li>
- *     <li>{@code LESS_THAN_OR_EQUAL} - 센서 값이 기준 값보다 작거나 같은 경우</li>
  *     <li>{@code EQUAL} - 센서 값이 기준 값과 같은 경우</li>
  * </ul>
  */
@@ -24,18 +22,6 @@ public enum Operator {
         @Override
         public boolean compare(double sensorValue, double targetValue) {
             return sensorValue < targetValue;
-        }
-    },
-    GREATER_THAN_OR_EQUAL(">=", "이상이면") {
-        @Override
-        public boolean compare(double sensorValue, double targetValue) {
-            return sensorValue >= targetValue;
-        }
-    },
-    LESS_THAN_OR_EQUAL("<=", "이하면") {
-        @Override
-        public boolean compare(double sensorValue, double targetValue) {
-            return sensorValue <= targetValue;
         }
     },
     EQUAL("=", "이면") {
