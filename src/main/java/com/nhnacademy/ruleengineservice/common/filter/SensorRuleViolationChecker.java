@@ -11,6 +11,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * SensorRuleViolationChecker 클래스는 센서 데이터에 대해 등록된 룰을 기반으로
+ * 위반된 룰을 판별하는 서비스 클래스입니다.
+ *
+ * <p>센서 데이터에는 gatewayId, sensorId, dataType, value 값이 포함되어야 하며,
+ * 해당 정보로 룰을 조회한 후 센서 값이 조건을 충족하지 못하는 경우 위반으로 간주합니다.</p>
+ *
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -19,9 +27,10 @@ public class SensorRuleViolationChecker {
     private final SensorRuleService sensorRuleService;
 
     /**
-     * 센서 데이터에서 위반된 룰 목록 반환
-     * @param sensorData - Map에 gatewayId, sensorId, dataType, value 포함
-     * @return 위반된 Rule 리스트
+     * 주어진 센서 데이터를 기반으로 위반된 룰 목록을 반환합니다.
+     *
+     * @param sensorData 센서 데이터 Map (gatewayId, sensorId, dataType, value 포함)
+     * @return 위반된 {@link Rule} 객체 리스트
      */
     public List<Rule> getViolatedRules(Map<String, Object> sensorData) {
         String gatewayId = (String) sensorData.get("gatewayId");
