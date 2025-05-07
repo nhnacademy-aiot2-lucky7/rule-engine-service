@@ -1,12 +1,12 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
 import com.nhnacademy.ruleengineservice.message.service.MessageService;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
-import com.nhnacademy.ruleengineservice.sensor_rule.domain.Rule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
      */
     @Override
     public void process(DataDTO dataDTO) {
-        List<Rule> violatedRules = violationService.getViolatedRules(dataDTO);
+        List<SensorRule> violatedRules = violationService.getViolatedRules(dataDTO);
 
         if (!violatedRules.isEmpty()) {
             ViolatedRuleMessageDTO dto = new ViolatedRuleMessageDTO(

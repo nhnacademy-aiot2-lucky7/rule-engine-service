@@ -1,12 +1,13 @@
 package com.nhnacademy.ruleengineservice.common.filter;
 
+import com.nhnacademy.ruleengineservice.common.exception.SensorRuleNotFoundException;
+import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
-import com.nhnacademy.ruleengineservice.sensor_rule.domain.Rule;
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class SensorRuleViolationServiceTest {
@@ -27,7 +30,7 @@ class SensorRuleViolationServiceTest {
     private SensorRuleService sensorRuleService;
 
     @Mock
-    private Rule rule;
+    private SensorRule sensorRule;
 
     @BeforeEach
     void setUp() {
@@ -40,7 +43,7 @@ class SensorRuleViolationServiceTest {
         String gatewayId = "gateway1";
         String sensorId = "sensor1";
         String dataType = "temperature";
-        double sensorValue = 26.5;
+        double sensorValue = 33.0;
 
         DataDTO dataDTO = new DataDTO(
                 gatewayId,
@@ -50,58 +53,65 @@ class SensorRuleViolationServiceTest {
                 20250505L
         );
 
-        when(sensorRuleService.getRulesByKey(gatewayId, sensorId, dataType)).thenReturn(List.of(rule));
+        SensorRule maxRule = SensorRule.createRule(
+                gatewayId,
+                sensorId,
+                dataType,
+                RuleType.MAX,
+                Operator.GREATER_THAN,
+                30.0,
+                10.0,
+                ActionType.LOG_WARNING
+        );
 
-        // Rule 값 및 Operator를 mock 처리
-        when(rule.getValue()).thenReturn(20.0); // 기준값 설정
-        when(rule.getRuletype()).thenReturn(RuleType.MIN);
-        when(rule.getOperator()).thenReturn(Operator.LESS_THAN); // 비교할 연산자 설정
+        SensorRule minRule = SensorRule.createRule(
+                gatewayId,
+                sensorId,
+                dataType,
+                RuleType.MIN,
+                Operator.LESS_THAN,
+                27.0,
+                10.0,
+                ActionType.LOG_WARNING
+        );
 
-        boolean comparisonResult = Operator.LESS_THAN.compare(sensorValue, 20.0); // 실제 비교 작업
+        SensorRule avgRule = SensorRule.createRule(
+                gatewayId,
+                sensorId,
+                dataType,
+                RuleType.AVG,
+                Operator.LESS_THAN,
+                27.0,
+                10.0,
+                ActionType.LOG_WARNING
+        );
 
-        List<Rule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
+        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MAX)).thenReturn(maxRule);
+        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MIN)).thenReturn(minRule);
+        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.AVG)).thenReturn(avgRule);
 
-        Assertions.assertFalse(comparisonResult);
-        Assertions.assertTrue(violatedRules.isEmpty());
+        List<SensorRule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
-        verify(sensorRuleService, times(1)).getRulesByKey(gatewayId, sensorId, dataType);
-        verify(rule, times(1)).getValue();
-        verify(rule, times(1)).getOperator();
+        assertThat(violatedRules).containsExactlyInAnyOrder(minRule, avgRule);
+        verify(sensorRuleService, times(3)).getSensorRule(anyString(), anyString(), anyString(), any());
     }
 
     @Test
-    @DisplayName("필터 불통 확인")
-    void testFilter_failsAtFirstRule() {
-        String gatewayId = "gateway1";
-        String sensorId = "sensor1";
-        String dataType = "temperature";
-        double sensorValue = 70.0;
-
-
+    @DisplayName("룰이 존재하지 않을 경우 예외 발생")
+    void getViolatedRules_shouldThrowException_whenRuleNotFound() {
         DataDTO dataDTO = new DataDTO(
-                gatewayId,
-                sensorId,
-                dataType,
-                sensorValue,
+                "gateway1",
+                "sensor1",
+                "temperature",
+                35.0,
                 20250505L
         );
 
-        when(sensorRuleService.getRulesByKey(gatewayId, sensorId, dataType)).thenReturn(List.of(rule)); // 룰 리스트 반환
-        when(rule.getValue()).thenReturn(60.0); // 기준값 설정
-        when(rule.getRuletype()).thenReturn(RuleType.MAX);
-        when(rule.getOperator()).thenReturn(Operator.GREATER_THAN); // 실제 enum 객체 사용
+        when(sensorRuleService.getSensorRule("gateway-1", "sensor-1", "temperature", RuleType.MIN))
+                .thenThrow(new SensorRuleNotFoundException("sensor-1", "temperature"));
 
-
-        boolean comparisonResult = Operator.GREATER_THAN.compare(sensorValue, 60.0);
-
-        List<Rule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
-
-        Assertions.assertTrue(comparisonResult);
-        Assertions.assertFalse(violatedRules.isEmpty());
-
-        // verify()로 호출 여부 확인
-        verify(sensorRuleService, times(1)).getRulesByKey(gatewayId, sensorId, dataType); // 올바른 인자 사용 확인
-        verify(rule, times(1)).getValue();
-        verify(rule, times(1)).getOperator();
+        assertThatThrownBy(() -> sensorRuleViolationService.getViolatedRules(dataDTO))
+                .isInstanceOf(SensorRuleNotFoundException.class)
+                .hasMessageContaining("No rules found for deviceId: sensor1 and dataType: temperature");
     }
 }

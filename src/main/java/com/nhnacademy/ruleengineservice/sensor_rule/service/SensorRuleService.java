@@ -1,8 +1,7 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service;
 
-import com.nhnacademy.ruleengineservice.sensor_rule.domain.Rule;
-
-import java.util.List;
+import com.nhnacademy.ruleengineservice.enums.RuleType;
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 
 /**
  * 센서 룰 서비스 인터페이스입니다.
@@ -13,26 +12,8 @@ import java.util.List;
  */
 public interface SensorRuleService {
 
-    /**
-     * 지정된 게이트웨이, 장치, 데이터 타입에 대한 룰을 저장합니다.
-     * <p>
-     * 이 메소드는 주어진 게이트웨이, 장치, 데이터 타입에 맞는 룰을 저장하며, 이미 존재하는 경우 룰을 업데이트합니다.
-     * </p>
-     *
-     * @param gatewayId  센서가 연결된 게이트웨이의 ID
-     * @param deviceId   센서 또는 장치의 ID
-     * @param dataType   데이터 타입 (예: 온도, 습도 등)
-     * @param rule       새로 저장할 룰 객체
-     */
-    void saveSensorRules(String gatewayId, String deviceId, String dataType, Rule rule);
-
-    /**
-     * 주어진 게이트웨이, 장치, 데이터 타입에 해당하는 룰을 조회합니다.
-     *
-     * @param gatewayId  센서가 연결된 게이트웨이의 ID
-     * @param deviceId   센서 또는 장치의 ID
-     * @param dataType   데이터 타입
-     * @return 해당하는 룰 리스트
-     */
-    List<Rule> getRulesByKey(String gatewayId, String deviceId, String dataType);
+    void saveSensorRule(SensorRule sensorRule);
+    SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType);
+    void updateSensorRule(SensorRule sensorRule);
+    void deleteSensorRule(String gatewayId, String sensorId, String dataType, String ruleType);
 }

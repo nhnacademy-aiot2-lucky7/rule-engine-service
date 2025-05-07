@@ -1,68 +1,50 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nhnacademy.ruleengineservice.enums.ActionType;
+import com.nhnacademy.ruleengineservice.enums.Operator;
+import com.nhnacademy.ruleengineservice.enums.RuleType;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * {@code SensorRule} 클래스는 특정 게이트웨이와 센서에 대한 룰들을 관리하는 클래스입니다.
- * 각 센서에 대해 여러 룰을 등록하고, 해당 룰에 맞춰 센서 데이터의 위반 여부를 판단할 수 있습니다.
- */
 @Data
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SensorRule {
-    /**
-     * 센서와 게이트웨이를 식별하기 위한 유니크한 ID (형식: "gatewayId_sensorId_type")
-     */
-    private String gatewayIdAndSensorIdAndType;
 
-    /**
-     * 센서에 적용된 룰 리스트
-     */
-    private List<Rule> rules = new ArrayList<>();
+    // 센서 식별 정보
+    private String gatewayId;
+    private String sensorId;
+    private String dataType; // 예: 온도, 습도 등
 
-    /**
-     * {@code SensorRule} 객체를 생성하는 생성자입니다.
-     *
-     * @param gatewayIdAndSensorIdAndType 센서와 게이트웨이를 식별하는 ID
-     * @param rule 해당 센서에 적용될 룰
-     */
-    private SensorRule(String gatewayIdAndSensorIdAndType, Rule rule) {
-        this.gatewayIdAndSensorIdAndType = gatewayIdAndSensorIdAndType;
-        this.rules.add(rule);
+    // 룰 정의
+    private RuleType ruleType; // 예: max, min, avg 등
+    private Operator operator; // 예: 초과, 미만 등
+    private Double value; // 기준 값
+    private Double range; // 범위 값 (선택적)
+    private ActionType action; // 룰 위반 시 수행할 액션
+
+    // Static 팩토리 메소드
+    public static SensorRule createRule(String gatewayId, String sensorId, String dataType,
+                                  RuleType ruleType, Operator operator,
+                                  Double value, Double range, ActionType action) {
+        return SensorRule.builder()
+                .gatewayId(gatewayId)
+                .sensorId(sensorId)
+                .dataType(dataType)
+                .ruleType(ruleType)
+                .operator(operator)
+                .value(value)
+                .range(range)
+                .action(action)
+                .build();
     }
 
-    /**
-     * 새로운 {@code SensorRule} 객체를 생성하는 팩토리 메소드입니다.
-     *
-     * @param gatewayIdAndSensorIdAndType 센서와 게이트웨이를 식별하는 ID
-     * @param rule 해당 센서에 적용될 룰
-     * @return 새로운 {@code SensorRule} 객체
-     */
-    public static SensorRule ofNewRule(String gatewayIdAndSensorIdAndType, Rule rule) {
-        return new SensorRule(gatewayIdAndSensorIdAndType, rule);
-    }
-
-    /**
-     * 기존 룰 리스트에 새로운 룰을 추가합니다.
-     *
-     * @param rule 추가할 룰
-     */
-    public void addRule(Rule rule) {
-        this.rules.add(rule);
-    }
-
-    /**
-     * 여러 개의 룰을 한 번에 추가할 수 있는 메소드입니다.
-     *
-     * @param rules 추가할 룰들의 리스트
-     */
-    public void addRules(List<Rule> rules) {
-        this.rules.addAll(rules);
+    // 센서 룰의 Redis 키를 생성하는 메소드
+    public String getRedisKey() {
+        return String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
     }
 }
