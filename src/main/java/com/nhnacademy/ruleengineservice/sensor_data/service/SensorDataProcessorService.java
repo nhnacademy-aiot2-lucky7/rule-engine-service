@@ -1,6 +1,6 @@
-package com.nhnacademy.ruleengineservice.sensordata.service;
+package com.nhnacademy.ruleengineservice.sensor_data.service;
 
-import com.nhnacademy.ruleengineservice.sensordata.dto.DataDTO;
+import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 
 /**
  * {@code SensorDataProcessorService}는 센서 데이터를 처리하는 서비스 인터페이스입니다.

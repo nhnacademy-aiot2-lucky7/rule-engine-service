@@ -1,7 +1,7 @@
 package com.nhnacademy.ruleengineservice.common.controller;
 
-import com.nhnacademy.ruleengineservice.sensordata.dto.DataDTO;
-import com.nhnacademy.ruleengineservice.sensordata.service.SensorDataProcessorService;
+import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
+import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;

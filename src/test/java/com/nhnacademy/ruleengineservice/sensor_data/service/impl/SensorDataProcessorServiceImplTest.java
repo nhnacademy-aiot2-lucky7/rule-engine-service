@@ -1,8 +1,8 @@
-package com.nhnacademy.ruleengineservice.sensordata.service.impl;
+package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
-import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleViolationService;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import com.nhnacademy.ruleengineservice.message.service.MessageService;
-import com.nhnacademy.ruleengineservice.sensordata.service.SensorDataProcessorService;
+import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 

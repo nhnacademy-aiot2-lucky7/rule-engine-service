@@ -1,8 +1,8 @@
 package com.nhnacademy.ruleengineservice.common.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.ruleengineservice.sensordata.dto.DataDTO;
-import com.nhnacademy.ruleengineservice.sensordata.service.SensorDataProcessorService;
+import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
+import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

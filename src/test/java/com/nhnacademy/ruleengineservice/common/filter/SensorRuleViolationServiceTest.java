@@ -2,10 +2,10 @@ package com.nhnacademy.ruleengineservice.common.filter;
 
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
-import com.nhnacademy.ruleengineservice.sensordata.dto.DataDTO;
-import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
-import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleService;
-import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleViolationService;
+import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.Rule;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,10 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 

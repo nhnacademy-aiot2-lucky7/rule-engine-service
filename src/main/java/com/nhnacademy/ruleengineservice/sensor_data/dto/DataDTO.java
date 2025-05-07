@@ -1,4 +1,4 @@
-package com.nhnacademy.ruleengineservice.sensordata.dto;
+package com.nhnacademy.ruleengineservice.sensor_data.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -1,20 +1,18 @@
-package com.nhnacademy.ruleengineservice.sensordata.service.impl;
+package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
-import com.nhnacademy.ruleengineservice.sensorrule.service.SensorRuleViolationService;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
 import com.nhnacademy.ruleengineservice.message.service.MessageService;
-import com.nhnacademy.ruleengineservice.sensordata.dto.DataDTO;
-import com.nhnacademy.ruleengineservice.sensordata.service.SensorDataProcessorService;
-import com.nhnacademy.ruleengineservice.sensorrule.domain.Rule;
+import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
+import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.Rule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * {@code SensorDataProcessorServiceImpl}는 센서 데이터를 처리하고, 룰 위반이 발생하면 알림 메시지를 전송하는 서비스입니다.
