@@ -41,10 +41,10 @@ public class SensorRuleViolationService {
                         operator.getSymbol(),
                         String.format("%.2f", targetvalue),
                         String.format("%.2f", sensorValue),
-                        !isValid ? "통과":"위반"
+                        isValid ? "위반":"통과"
                 );
 
-                if (!isValid) {
+                if (isValid) {
                     violatedRules.add(rule);
                 }
 

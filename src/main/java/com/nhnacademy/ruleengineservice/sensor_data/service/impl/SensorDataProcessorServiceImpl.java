@@ -37,9 +37,22 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
         List<SensorRule> violatedRules = violationService.getViolatedRules(dataDTO);
 
         if (!violatedRules.isEmpty()) {
+            // 위반된 룰들의 이름과 상세 정보 생성
+            StringBuilder eventDetailBuilder = new StringBuilder();
+            for (SensorRule violatedRule : violatedRules) {
+                eventDetailBuilder.append(String.format("센서 %s의 %s 룰 위반: 데이터값 %.2f은(는) %.2f을(를) %s %s.%n",
+                        dataDTO.getSensorId(),
+                        violatedRule.getRuleType(),
+                        dataDTO.getValue(),
+                        violatedRule.getValue(),
+                        violatedRule.getValue(),
+                        violatedRule.getOperator().getDescription(),
+                        violatedRule.getAction().getDesc()));
+            }
+
             ViolatedRuleMessageDTO dto = new ViolatedRuleMessageDTO(
                     EventLevel.WARN,
-                    "",
+                    eventDetailBuilder.toString(),
                     dataDTO.getSensorId(),
                     "센서",
                     "departmentId",

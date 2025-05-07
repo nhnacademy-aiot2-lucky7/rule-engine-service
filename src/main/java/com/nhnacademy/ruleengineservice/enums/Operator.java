@@ -12,19 +12,19 @@ package com.nhnacademy.ruleengineservice.enums;
  * </ul>
  */
 public enum Operator {
-    GREATER_THAN(">", "초과하면") {
+    GREATER_THAN(">", "초과하였으므로") {
         @Override
         public boolean compare(double sensorValue, double targetValue) {
             return sensorValue > targetValue;
         }
     },
-    LESS_THAN("<", "미만이면") {
+    LESS_THAN("<", "미만이므로") {
         @Override
         public boolean compare(double sensorValue, double targetValue) {
             return sensorValue < targetValue;
         }
     },
-    EQUAL("=", "이면") {
+    EQUAL("=", "이므로") {
         @Override
         public boolean compare(double sensorValue, double targetValue) {
             return sensorValue == targetValue;
