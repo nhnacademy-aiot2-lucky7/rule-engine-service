@@ -3,6 +3,7 @@ package com.nhnacademy.ruleengineservice.common.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ class SensorDataControllerTest {
     }
 
     @Test
+    @DisplayName("DTO 형식대로 잘 받아온 경우")
     void testReceiveSensorData() throws Exception {
         DataDTO dataDTO = new DataDTO(
                 "gateway1",
@@ -49,7 +51,7 @@ class SensorDataControllerTest {
                 20250505L
         );
 
-        mockMvc.perform(post("/ruleEngine/data")
+        mockMvc.perform(post("/rule_engine/data")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dataDTO)))
                 .andExpect(status().isOk());

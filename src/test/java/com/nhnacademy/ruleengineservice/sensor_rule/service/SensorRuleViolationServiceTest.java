@@ -1,4 +1,4 @@
-package com.nhnacademy.ruleengineservice.common.filter;
+package com.nhnacademy.ruleengineservice.sensor_rule.service;
 
 import com.nhnacademy.ruleengineservice.common.exception.SensorRuleNotFoundException;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
@@ -6,8 +6,6 @@ import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
-import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
-import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
