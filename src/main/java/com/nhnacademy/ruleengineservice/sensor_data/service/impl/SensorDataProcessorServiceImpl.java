@@ -38,27 +38,27 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
 
         if (!violatedRules.isEmpty()) {
             // 위반된 룰들의 이름과 상세 정보 생성
-            StringBuilder eventDetailBuilder = new StringBuilder();
             for (SensorRule violatedRule : violatedRules) {
-                eventDetailBuilder.append(String.format("센서 %s의 %s 룰 위반: 데이터값 %.2f은(는) %.2f을(를) %s %s.%n",
+                String eventDetail = String.format("센서 %s의 %s 룰 위반: 데이터값 %.2f은(는) %.2f을(를) %s %s.%n",
                         dataDTO.getSensorId(),
                         violatedRule.getRuleType(),
                         dataDTO.getValue(),
                         violatedRule.getValue(),
-                        violatedRule.getValue(),
                         violatedRule.getOperator().getDescription(),
-                        violatedRule.getAction().getDesc()));
+                        violatedRule.getAction().getDesc()
+                );
+
+                ViolatedRuleMessageDTO dto = new ViolatedRuleMessageDTO(
+                        EventLevel.WARN,
+                        eventDetail,
+                        dataDTO.getSensorId(),
+                        "센서",
+                        "departmentId",
+                        LocalDateTime.now());
+                messageService.send(dto);
+                log.debug("센서 데이터가 위반한 룰들: {}", violatedRules);
             }
 
-            ViolatedRuleMessageDTO dto = new ViolatedRuleMessageDTO(
-                    EventLevel.WARN,
-                    eventDetailBuilder.toString(),
-                    dataDTO.getSensorId(),
-                    "센서",
-                    "departmentId",
-                    LocalDateTime.now());
-            messageService.send(dto);
-            log.debug("센서 데이터가 위반한 룰들: {}", violatedRules);
         } else {
             log.debug("센서 데이터가 모든 룰을 통과했습니다!");
         }
