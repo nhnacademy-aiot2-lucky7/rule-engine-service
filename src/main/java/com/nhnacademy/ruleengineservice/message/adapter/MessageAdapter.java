@@ -1,4 +1,4 @@
-package com.nhnacademy.ruleengineservice.message.service;
+package com.nhnacademy.ruleengineservice.message.adapter;
 
 import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
 
@@ -9,7 +9,7 @@ import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
  * 구현 클래스에서는 {@link ViolatedRuleMessageDTO} 객체를 외부 메시지 서비스로 전송하는 방식으로 기능을 수행합니다.
  * </p>
  */
-public interface MessageService {
+public interface MessageAdapter {
     /**
      * 룰 위반 메시지를 외부 메시지 서비스로 전송합니다.
      *
