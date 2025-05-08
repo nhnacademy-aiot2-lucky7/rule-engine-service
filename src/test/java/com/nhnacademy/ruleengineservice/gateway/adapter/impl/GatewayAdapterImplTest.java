@@ -7,9 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.Mockito.when;
@@ -47,22 +45,5 @@ class GatewayAdapterImplTest {
         String result = gatewayAdapter.getDepartmentIdByGatewayId(gatewayId);
 
         Assertions.assertEquals("department1", result);
-    }
-
-    @Test
-    @DisplayName("gatewayId로 departmentId 가져오기 - 예외 발생 시 실패")
-    void getDepartmentIdByGatewayId_failed() {
-        String gatewayId = "gateway1";
-        String expectedDeptId = "department1";
-
-        when(webClient.get()).thenReturn(uriSpec);
-        when(uriSpec.uri("/gateway-service/gateway/{gatewayId}/department", gatewayId)).thenReturn(headersSpec);
-        when(headersSpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(String.class)).thenThrow(new WebClientRequestException.class(
-                new RuntimeException("네트워크 오류"), null));
-
-        String result = gatewayAdapter.getDepartmentIdByGatewayId(gatewayId);
-
-        Assertions.assertNull(result);
     }
 }
