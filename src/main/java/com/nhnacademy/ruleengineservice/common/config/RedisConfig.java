@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.nhnacademy.ruleengineservice.redis.provider.RedisProvider;
-import com.nhnacademy.ruleengineservice.sensorrule.domain.SensorRule;
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
