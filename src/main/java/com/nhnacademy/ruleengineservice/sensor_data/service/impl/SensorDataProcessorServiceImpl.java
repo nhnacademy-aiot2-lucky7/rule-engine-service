@@ -1,10 +1,11 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
+import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
-import com.nhnacademy.ruleengineservice.message.service.MessageService;
+import com.nhnacademy.ruleengineservice.message.adapter.MessageAdapter;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,8 @@ import java.util.List;
 public class SensorDataProcessorServiceImpl implements SensorDataProcessorService {
 
     private final SensorRuleViolationService violationService;
-    private final MessageService messageService;
+    private final MessageAdapter messageAdapter;
+    private final GatewayAdapter gatewayAdapter;
 
     /**
      * 센서 데이터를 처리하고 룰 위반 여부를 체크합니다.
@@ -39,7 +41,7 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
         if (!violatedRules.isEmpty()) {
             // 위반된 룰들의 이름과 상세 정보 생성
             for (SensorRule violatedRule : violatedRules) {
-                String eventDetail = String.format("센서 %s의 %s 룰 위반: 데이터값 %.2f은(는) %.2f을(를) %s %s.%n",
+                String eventDetail = String.format("센서 %s의 %s 룰 위반: 데이터값 %.2f은(는) %.2f%s %s.",
                         dataDTO.getSensorId(),
                         violatedRule.getRuleType(),
                         dataDTO.getValue(),
@@ -53,9 +55,9 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
                         eventDetail,
                         dataDTO.getSensorId(),
                         "센서",
-                        "departmentId",
+                        gatewayAdapter.getDepartmentIdByGatewayId(dataDTO.getGatewayId()),
                         LocalDateTime.now());
-                messageService.send(dto);
+                messageAdapter.send(dto);
                 log.debug("센서 데이터가 위반한 룰들: {}", violatedRules);
             }
 

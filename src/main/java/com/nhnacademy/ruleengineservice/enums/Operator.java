@@ -12,7 +12,7 @@ package com.nhnacademy.ruleengineservice.enums;
  * </ul>
  */
 public enum Operator {
-    GREATER_THAN(">", "초과하였으므로") {
+    GREATER_THAN(">", "을(를) 초과하였으므로") {
         @Override
         public boolean compare(double sensorValue, double targetValue) {
             return sensorValue > targetValue;
