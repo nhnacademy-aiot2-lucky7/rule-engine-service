@@ -20,4 +20,11 @@ public class WebClientConfig {
                 .baseUrl("http://message-service:8080")
                 .build();
     }
+
+    @Bean(name = "sensorWebClient")
+    public WebClient sensorWebClient(WebClient.Builder builder) {
+        return builder
+                .baseUrl("http://sensor-service:10238")
+                .build();
+    }
 }

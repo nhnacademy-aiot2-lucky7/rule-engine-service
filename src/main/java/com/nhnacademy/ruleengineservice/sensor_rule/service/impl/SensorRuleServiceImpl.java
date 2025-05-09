@@ -19,8 +19,13 @@ public class SensorRuleServiceImpl implements SensorRuleService {
     @Override
     public void saveSensorRule(SensorRule sensorRule) {
         String key = sensorRule.getRedisKey();
+        if(Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            log.info("기존 룰이 존재합니다. 덮어씁니다. key={}", key);
+        } else {
+            log.info("신규 룰을 저장합니다. key={}", key);
+        }
+
         redisTemplate.opsForValue().set(key, sensorRule);
-        log.info("Saved sensor rule: {}", key);
     }
 
     @Override
