@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.nhnacademy.ruleengineservice.redis.provider.RedisProvider;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisPassword;
@@ -31,43 +31,24 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 public class RedisConfig {
 
-    private final RedisProvider redisEnvProvider;
+    @Value("${redis.host}")
+    private String host;
+    @Value("${redis.port}")
+    private int port;
+    @Value("${redis.password}")
+    private String password;
 
-    /**
-     * Redis 서버와의 연결을 위한 LettuceConnectionFactory 빈을 생성합니다.
-     * <p>
-     * Redis 서버의 호스트, 포트, 비밀번호 등의 정보를 RedisProvider를 통해 가져와 설정합니다.
-     * </p>
-     *
-     * @return LettuceConnectionFactory 객체
-     */
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
-        config.setHostName(redisEnvProvider.getRedisHost());
-        config.setPort(redisEnvProvider.getRedisPort());
-
-        // 비밀번호가 null일 경우, 설정하지 않도록 처리
-        String password = redisEnvProvider.getRedisPassword();
-        if (password != null) {
-            config.setPassword(RedisPassword.of(password));
-        }
-
-        // 로컬 환경에서 데이터베이스 번호는 기본값 사용
-        config.setDatabase(redisEnvProvider.getRedisDatabase());
+        config.setHostName(host);
+        config.setPort(port);
+        config.setPassword(RedisPassword.of(password));
+        config.setDatabase(273);
 
         return new LettuceConnectionFactory(config);
     }
 
-    /**
-     * RedisTemplate 빈을 생성합니다.
-     * <p>
-     * RedisTemplate은 Redis와의 데이터 교환을 위한 템플릿으로, 키와 값에 대한 직렬화 방식으로 StringRedisSerializer를 사용합니다.
-     * </p>
-     *
-     * @param connectionFactory LettuceConnectionFactory 객체
-     * @return RedisTemplate<String, SensorRule> 객체
-     */
     @Bean
     public RedisTemplate<String, SensorRule> redisTemplate(LettuceConnectionFactory connectionFactory) {
         RedisTemplate<String, SensorRule> template = new RedisTemplate<>();

@@ -24,13 +24,14 @@ public class SensorRule {
     private RuleType ruleType; // 예: max, min, avg 등
     private Operator operator; // 예: 초과, 미만 등
     private Double value; // 기준 값
-    private Double range; // 범위 값 (선택적)
+    private Double minValue; // 기준 값의 최소값 (선택적)
+    private Double maxValue; // 기준 값의 최소값 (선택적)
     private ActionType action; // 룰 위반 시 수행할 액션
 
     // Static 팩토리 메소드
     public static SensorRule createRule(String gatewayId, String sensorId, String dataType,
                                   RuleType ruleType, Operator operator,
-                                  Double value, Double range, ActionType action) {
+                                  Double value, Double minValue, Double maxValue, ActionType action) {
         return SensorRule.builder()
                 .gatewayId(gatewayId)
                 .sensorId(sensorId)
@@ -38,7 +39,8 @@ public class SensorRule {
                 .ruleType(ruleType)
                 .operator(operator)
                 .value(value)
-                .range(range)
+                .minValue(minValue)
+                .maxValue(maxValue)
                 .action(action)
                 .build();
     }

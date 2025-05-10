@@ -1,6 +1,6 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service.impl;
 
-import com.nhnacademy.ruleengineservice.common.exception.SensorRuleNotFoundException;
+import com.nhnacademy.ruleengineservice.common.exception.NotFoundException;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
@@ -49,8 +49,9 @@ public class SensorRuleViolationServiceImpl implements SensorRuleViolationServic
                     violatedRules.add(rule);
                 }
 
-            } catch (Exception e) {
-                throw new SensorRuleNotFoundException(dataDTO.getSensorId(), dataDTO.getDataType());
+            } catch (NotFoundException e) {
+                log.warn("룰 없음 - 게이트웨이: {}, 센서: {}, 데이터타입: {}, 타입: {}",
+                        dataDTO.getGatewayId(), dataDTO.getSensorId(), dataDTO.getDataType(), ruleType);
             }
         }
         return violatedRules;

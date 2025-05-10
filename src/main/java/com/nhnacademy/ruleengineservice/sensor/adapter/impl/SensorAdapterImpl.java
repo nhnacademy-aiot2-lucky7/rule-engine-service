@@ -1,33 +1,31 @@
 package com.nhnacademy.ruleengineservice.sensor.adapter.impl;
 
 import com.nhnacademy.ruleengineservice.sensor.adapter.SensorAdapter;
+import com.nhnacademy.ruleengineservice.common.client.SensorFeignClient;
 import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientException;
+
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Component
 public class SensorAdapterImpl implements SensorAdapter {
 
-    private final WebClient sensorWebClient;
+    private final SensorFeignClient sensorFeignClient;
 
-    public SensorAdapterImpl(@Qualifier("sensorWebClient") WebClient sensorWebClient) {
-        this.sensorWebClient = sensorWebClient;
+    public SensorAdapterImpl(SensorFeignClient sensorFeignClient) {
+        this.sensorFeignClient = sensorFeignClient;
     }
 
-    public ThresholdAnalysisDTO getAnalysisResult(String gatewayId) {
+    @Override
+    public List<ThresholdAnalysisDTO> getAnalysisResult(String gatewayId) {
         try {
-            return sensorWebClient.get()
-                    .uri("/sensor-service/analysis-result/{gatewayId}", gatewayId)
-                    .retrieve()
-                    .bodyToMono(ThresholdAnalysisDTO.class)
-                    .block(); // 동기적으로 호출
-        } catch (WebClientException e) {
-            log.error("[센서 서비스] 분석 결과 요청 실패: {}", e.getMessage(), e);
-            return null;
+            return sensorFeignClient.getAnalysisResult(gatewayId);
+        } catch (Exception e) {
+            log.warn("[Feign] 센서 서비스 요청 실패: {}", e.getMessage(), e);
+            return Collections.emptyList();
         }
     }
 }

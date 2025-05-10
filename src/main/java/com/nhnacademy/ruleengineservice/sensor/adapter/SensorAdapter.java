@@ -2,6 +2,8 @@ package com.nhnacademy.ruleengineservice.sensor.adapter;
 
 import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
 
+import java.util.List;
+
 public interface SensorAdapter {
-    ThresholdAnalysisDTO getAnalysisResult(String gatewayId);
+    List<ThresholdAnalysisDTO> getAnalysisResult(String gatewayId);
 }

@@ -1,4 +1,4 @@
-package com.nhnacademy.ruleengineservice.message.dto;
+package com.nhnacademy.ruleengineservice.event.dto;
 
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import lombok.Value;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
  * </ul>
  */
 @Value
-public class ViolatedRuleMessageDTO {
+public class ViolatedRuleEventDTO {
     /**
      * 이벤트 수준 (INFO, WARN, ERROR)
      */
