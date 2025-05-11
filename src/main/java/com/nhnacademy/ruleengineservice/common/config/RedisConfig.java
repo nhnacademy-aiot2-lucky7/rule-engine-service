@@ -37,6 +37,8 @@ public class RedisConfig {
     private int port;
     @Value("${redis.password}")
     private String password;
+    @Value("${redis.database}")
+    private int database;
 
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
@@ -44,7 +46,7 @@ public class RedisConfig {
         config.setHostName(host);
         config.setPort(port);
         config.setPassword(RedisPassword.of(password));
-        config.setDatabase(273);
+        config.setDatabase(database);
 
         return new LettuceConnectionFactory(config);
     }
