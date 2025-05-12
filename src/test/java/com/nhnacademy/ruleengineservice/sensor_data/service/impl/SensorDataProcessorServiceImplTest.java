@@ -1,11 +1,12 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
+import ch.qos.logback.core.joran.spi.EventPlayer;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
-import com.nhnacademy.ruleengineservice.event.adapter.EventAdapter;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
+import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
 import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
@@ -35,7 +36,7 @@ class SensorDataProcessorServiceImplTest {
     private SensorRuleViolationService violationChecker;
 
     @Mock
-    private EventAdapter eventAdapter;
+    private EventProducer eventProducer;
 
     @Mock
     private GatewayAdapter gatewayAdapter;
@@ -63,7 +64,7 @@ class SensorDataProcessorServiceImplTest {
 
         processorService.process(dataDTO);
 
-        verify(eventAdapter, never()).send(any());
+        verify(eventProducer, never()).sendEvent(any());
     }
 
     @Test
@@ -87,7 +88,7 @@ class SensorDataProcessorServiceImplTest {
         processorService.process(dataDTO);
 
         ArgumentCaptor<ViolatedRuleEventDTO> captor = ArgumentCaptor.forClass(ViolatedRuleEventDTO.class);
-        verify(eventAdapter, times(1)).send(captor.capture());
+        verify(eventProducer, times(1)).sendEvent(captor.capture());
 
         ViolatedRuleEventDTO sentMessage = captor.getValue();
 

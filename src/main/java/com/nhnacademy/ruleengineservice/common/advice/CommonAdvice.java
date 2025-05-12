@@ -23,13 +23,6 @@ public class CommonAdvice {
                 .body("CommonException: " + e.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception ex){
-        log.warn("Exception 발생: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Server Error: " + ex.getMessage());
-    }
-
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<String> exceptionHandler(Throwable e){
         log.warn("Throwable 발생: {}", e.getMessage());

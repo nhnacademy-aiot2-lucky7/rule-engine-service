@@ -1,6 +1,5 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service.impl;
 
-import com.nhnacademy.ruleengineservice.common.exception.NotFoundException;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
@@ -22,16 +21,17 @@ public class SensorRuleViolationServiceImpl implements SensorRuleViolationServic
 
     public List<SensorRule> getViolatedRules(DataDTO dataDTO) {
         List<SensorRule> violatedRules = new ArrayList<>();
+        List<RuleType> ruleTypes = List.of(RuleType.MAX, RuleType.MIN, RuleType.AVG);
 
-        for (RuleType ruleType : List.of(RuleType.MAX, RuleType.MIN, RuleType.AVG)) {
-            try {
-                SensorRule rule = sensorRuleService.getSensorRule(
-                        dataDTO.getGatewayId(),
-                        dataDTO.getSensorId(),
-                        dataDTO.getDataType(),
-                        ruleType
-                );
+        for (RuleType ruleType : ruleTypes) {
+            SensorRule rule = sensorRuleService.getSensorRule(
+                    dataDTO.getGatewayId(),
+                    dataDTO.getSensorId(),
+                    dataDTO.getDataType(),
+                    ruleType
+            );
 
+            if (rule != null) {
                 Operator operator = rule.getOperator();
                 double targetvalue = rule.getValue();
                 double sensorValue = dataDTO.getValue();
@@ -49,7 +49,7 @@ public class SensorRuleViolationServiceImpl implements SensorRuleViolationServic
                     violatedRules.add(rule);
                 }
 
-            } catch (NotFoundException e) {
+            } else {
                 log.warn("룰 없음 - 게이트웨이: {}, 센서: {}, 데이터타입: {}, 타입: {}",
                         dataDTO.getGatewayId(), dataDTO.getSensorId(), dataDTO.getDataType(), ruleType);
             }

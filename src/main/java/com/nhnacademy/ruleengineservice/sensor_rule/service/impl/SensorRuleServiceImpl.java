@@ -9,13 +9,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SensorRuleServiceImpl implements SensorRuleService {
 
     private final RedisTemplate<String, SensorRule> redisTemplate;
-    private static final String EXCEPTION_MESSAGE = "%s, %s, %s에 해당하는 룰이 없습니다.";
+    private static final String EXCEPTION_MESSAGE = "해당 센서 룰을 찾을 수 없습니다. - Gateway: %s, Sensor: %s, DataType: %s";
 
     @Override
     public void saveSensorRule(SensorRule sensorRule) {
@@ -32,13 +34,8 @@ public class SensorRuleServiceImpl implements SensorRuleService {
     @Override
     public SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType) {
         String key = String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
-        SensorRule rule = redisTemplate.opsForValue().get(key);
 
-        if (rule == null) {
-            throw new NotFoundException(String.format(EXCEPTION_MESSAGE, gatewayId, sensorId, dataType));
-        }
-
-        return rule;
+        return redisTemplate.opsForValue().get(key);
     }
 
     @Override
@@ -62,7 +59,5 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         if (!deleted) {
             throw new NotFoundException(String.format(EXCEPTION_MESSAGE, gatewayId, sensorId, dataType));
         }
-
-        log.info("Deleted sensor rule: {}", key);
     }
 }
