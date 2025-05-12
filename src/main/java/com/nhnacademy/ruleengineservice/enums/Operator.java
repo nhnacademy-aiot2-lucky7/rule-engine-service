@@ -29,6 +29,12 @@ public enum Operator {
         public boolean compare(double sensorValue, double targetValue) {
             return sensorValue == targetValue;
         }
+    },
+    OUT_OF_BOUND("< or >", "범위를 벗어났으므로") {
+        @Override
+        public boolean compare(double sensorValue, double minValue, double maxValue) {
+            return sensorValue < minValue || sensorValue > maxValue;
+        }
     };
 
     private final String symbol;
@@ -46,8 +52,13 @@ public enum Operator {
      * @param targetValue 비교할 기준 값
      * @return 비교 결과 (true 또는 false)
      */
-    public abstract boolean compare(double sensorValue, double targetValue);
+    public boolean compare(double sensorValue, double targetValue) {
+        throw new UnsupportedOperationException(this.name() + "는 단일 기준값 비교를 지원하지 않습니다.");
+    }
 
+    public boolean compare(double sensorValue, double minValue, double maxValue) {
+        throw new UnsupportedOperationException("This operator doesn't support two value comparison.");
+    }
     /**
      * 연산자의 기호를 반환합니다.
      *

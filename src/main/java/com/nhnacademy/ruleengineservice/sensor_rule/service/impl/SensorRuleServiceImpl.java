@@ -1,6 +1,6 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service.impl;
 
-import com.nhnacademy.ruleengineservice.common.exception.SensorRuleNotFoundException;
+import com.nhnacademy.ruleengineservice.common.exception.NotFoundException;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
@@ -9,30 +9,33 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SensorRuleServiceImpl implements SensorRuleService {
 
     private final RedisTemplate<String, SensorRule> redisTemplate;
+    private static final String EXCEPTION_MESSAGE = "해당 센서 룰을 찾을 수 없습니다. - Gateway: %s, Sensor: %s, DataType: %s";
 
     @Override
     public void saveSensorRule(SensorRule sensorRule) {
         String key = sensorRule.getRedisKey();
+        if(Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+            log.info("기존 룰이 존재합니다. 덮어씁니다. key={}", key);
+        } else {
+            log.info("신규 룰을 저장합니다. key={}", key);
+        }
+
         redisTemplate.opsForValue().set(key, sensorRule);
-        log.info("Saved sensor rule: {}", key);
     }
 
     @Override
     public SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType) {
         String key = String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
-        SensorRule rule = redisTemplate.opsForValue().get(key);
 
-        if (rule == null) {
-            throw new SensorRuleNotFoundException(sensorId, dataType);
-        }
-
-        return rule;
+        return redisTemplate.opsForValue().get(key);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         SensorRule existing = redisTemplate.opsForValue().get(key);
 
         if (existing == null) {
-            throw new SensorRuleNotFoundException(sensorRule.getSensorId(), sensorRule.getDataType());
+            throw new NotFoundException(String.format(EXCEPTION_MESSAGE, sensorRule.getGatewayId(), sensorRule.getSensorId(), sensorRule.getDataType()));
         }
 
         redisTemplate.opsForValue().set(key, sensorRule);
@@ -54,9 +57,7 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         Boolean deleted = redisTemplate.delete(key);
 
         if (!deleted) {
-            throw new SensorRuleNotFoundException(sensorId, dataType);
+            throw new NotFoundException(String.format(EXCEPTION_MESSAGE, gatewayId, sensorId, dataType));
         }
-
-        log.info("Deleted sensor rule: {}", key);
     }
 }

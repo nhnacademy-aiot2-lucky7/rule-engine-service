@@ -6,15 +6,13 @@ package com.nhnacademy.ruleengineservice.enums;
  * 이 열거형은 각 센서 데이터에 대해 임계값, 평균값, 최소값, 최댓값과 같은 조건을 설정하여 데이터를 비교하고 분석하는 데 사용됩니다.
  * </p>
  * <ul>
- *     <li>{@code THRESHOLD} - 센서 데이터가 임계값을 초과하거나 미만일 경우 적용</li>
  *     <li>{@code AVG} - 센서 데이터가 평균값을 기준으로 비교되는 경우</li>
  *     <li>{@code MIN} - 센서 데이터가 최소값을 기준으로 비교되는 경우</li>
  *     <li>{@code MAX} - 센서 데이터가 최댓값을 기준으로 비교되는 경우</li>
  * </ul>
  */
 public enum RuleType {
-    THRESHOLD("threshold", "임계값이"),
-    AVG("avg", "평균값이"),
+    AVG("avg", "평균값의 범위가"),
     MIN("min","최소값이"),
     MAX("max","최댓값이");
 

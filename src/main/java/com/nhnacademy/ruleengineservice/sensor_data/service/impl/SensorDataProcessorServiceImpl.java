@@ -1,11 +1,11 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
+import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
 import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
-import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
-import com.nhnacademy.ruleengineservice.message.adapter.MessageAdapter;
+import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.List;
 public class SensorDataProcessorServiceImpl implements SensorDataProcessorService {
 
     private final SensorRuleViolationService violationService;
-    private final MessageAdapter messageAdapter;
+    private final EventProducer eventProducer;
     private final GatewayAdapter gatewayAdapter;
 
     /**
@@ -50,17 +50,16 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
                         violatedRule.getAction().getDesc()
                 );
 
-                ViolatedRuleMessageDTO dto = new ViolatedRuleMessageDTO(
+                ViolatedRuleEventDTO dto = new ViolatedRuleEventDTO(
                         EventLevel.WARN,
                         eventDetail,
                         dataDTO.getSensorId(),
                         "센서",
                         gatewayAdapter.getDepartmentIdByGatewayId(dataDTO.getGatewayId()),
                         LocalDateTime.now());
-                messageAdapter.send(dto);
+                eventProducer.sendEvent(dto);
                 log.debug("센서 데이터가 위반한 룰들: {}", violatedRules);
             }
-
         } else {
             log.debug("센서 데이터가 모든 룰을 통과했습니다!");
         }

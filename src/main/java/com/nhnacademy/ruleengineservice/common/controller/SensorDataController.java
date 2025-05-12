@@ -4,6 +4,7 @@ import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +35,9 @@ public class SensorDataController {
      * @param dataDTO 수신된 센서 데이터 DTO
      */
     @PostMapping("/data")
-    public void receiveSensorData(@RequestBody DataDTO dataDTO) {
+    public ResponseEntity<Void> receiveSensorData(@RequestBody DataDTO dataDTO) {
         log.info("수신 데이터: [{}]", dataDTO);
         processorService.process(dataDTO);
+        return ResponseEntity.ok().build();
     }
 }

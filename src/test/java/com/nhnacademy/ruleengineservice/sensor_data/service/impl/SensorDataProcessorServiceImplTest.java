@@ -1,12 +1,13 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
+import ch.qos.logback.core.joran.spi.EventPlayer;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
+import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
+import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
 import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
-import com.nhnacademy.ruleengineservice.message.dto.ViolatedRuleMessageDTO;
-import com.nhnacademy.ruleengineservice.message.adapter.MessageAdapter;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
@@ -35,7 +36,7 @@ class SensorDataProcessorServiceImplTest {
     private SensorRuleViolationService violationChecker;
 
     @Mock
-    private MessageAdapter messageAdapter;
+    private EventProducer eventProducer;
 
     @Mock
     private GatewayAdapter gatewayAdapter;
@@ -63,7 +64,7 @@ class SensorDataProcessorServiceImplTest {
 
         processorService.process(dataDTO);
 
-        verify(messageAdapter, never()).send(any());
+        verify(eventProducer, never()).sendEvent(any());
     }
 
     @Test
@@ -76,7 +77,8 @@ class SensorDataProcessorServiceImplTest {
                 RuleType.MIN,
                 Operator.LESS_THAN,
                 50.0,
-                5.0,
+                null,
+                null,
                 ActionType.SEND_ALERT
         );
 
@@ -85,10 +87,10 @@ class SensorDataProcessorServiceImplTest {
 
         processorService.process(dataDTO);
 
-        ArgumentCaptor<ViolatedRuleMessageDTO> captor = ArgumentCaptor.forClass(ViolatedRuleMessageDTO.class);
-        verify(messageAdapter, times(1)).send(captor.capture());
+        ArgumentCaptor<ViolatedRuleEventDTO> captor = ArgumentCaptor.forClass(ViolatedRuleEventDTO.class);
+        verify(eventProducer, times(1)).sendEvent(captor.capture());
 
-        ViolatedRuleMessageDTO sentMessage = captor.getValue();
+        ViolatedRuleEventDTO sentMessage = captor.getValue();
 
         Assertions.assertAll(
                 ()->{

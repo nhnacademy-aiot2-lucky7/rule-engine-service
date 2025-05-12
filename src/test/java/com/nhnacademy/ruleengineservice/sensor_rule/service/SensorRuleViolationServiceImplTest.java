@@ -1,28 +1,31 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service;
 
-import com.nhnacademy.ruleengineservice.common.exception.SensorRuleNotFoundException;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.impl.SensorRuleViolationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-class SensorRuleViolationServiceTest {
+@ExtendWith(MockitoExtension.class)
+class SensorRuleViolationServiceImplTest {
 
     @InjectMocks
-    private SensorRuleViolationService sensorRuleViolationService;
+    private SensorRuleViolationServiceImpl sensorRuleViolationService;
 
     @Mock
     private SensorRuleService sensorRuleService;
@@ -33,8 +36,6 @@ class SensorRuleViolationServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
         maxRule = SensorRule.createRule(
                 "gateway1",
                 "sensor1",
@@ -42,7 +43,8 @@ class SensorRuleViolationServiceTest {
                 RuleType.MAX,
                 Operator.GREATER_THAN,
                 30.0,
-                10.0,
+                null,
+                null,
                 ActionType.LOG_WARNING
         );
 
@@ -52,8 +54,9 @@ class SensorRuleViolationServiceTest {
                 "temperature",
                 RuleType.MIN,
                 Operator.LESS_THAN,
-                27.0,
-                10.0,
+                22.0,
+                null,
+                null,
                 ActionType.LOG_WARNING
         );
 
@@ -64,7 +67,8 @@ class SensorRuleViolationServiceTest {
                 RuleType.AVG,
                 Operator.LESS_THAN,
                 25.0,
-                10.0,
+                20.0,
+                30.0,
                 ActionType.LOG_WARNING
         );
     }
@@ -123,8 +127,8 @@ class SensorRuleViolationServiceTest {
     }
 
     @Test
-    @DisplayName("룰이 존재하지 않을 경우 예외 발생")
-    void getViolatedRules_shouldThrowException_whenRuleNotFound() {
+    @DisplayName("룰이 없을 경우 룰 위반도 없음")
+    void noSensorRules() {
         DataDTO dataDTO = new DataDTO(
                 "gateway1",
                 "sensor1",
@@ -133,11 +137,14 @@ class SensorRuleViolationServiceTest {
                 20250505L
         );
 
-        when(sensorRuleService.getSensorRule("gateway-1", "sensor-1", "temperature", RuleType.MIN))
-                .thenThrow(new SensorRuleNotFoundException("sensor-1", "temperature"));
+        // mock: getSensorRule은 null 반환
+        when(sensorRuleService.getSensorRule(anyString(), anyString(), anyString(), any())).thenReturn(null);
 
-        assertThatThrownBy(() -> sensorRuleViolationService.getViolatedRules(dataDTO))
-                .isInstanceOf(SensorRuleNotFoundException.class)
-                .hasMessageContaining("No rules found for deviceId: sensor1 and dataType: temperature");
+        // when
+        List<SensorRule> result = sensorRuleViolationService.getViolatedRules(dataDTO);
+
+        // then
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 }
