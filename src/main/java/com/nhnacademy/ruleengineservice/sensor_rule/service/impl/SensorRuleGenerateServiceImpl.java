@@ -25,7 +25,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
     @Override
     public void generateRules(List<ThresholdAnalysisDTO> analysisDTOList) {
         for (ThresholdAnalysisDTO dto : analysisDTOList) {
-            log.info("Generating rules for sensorId: {}, dataType: {}", dto.getSensorId(), dto.getDataType());
+            log.info("Generating rules for gatewayId: {}, sensorId: {}, dataType: {}", dto.getGatewayId(), dto.getSensorId(), dto.getDataType());
             ruleGenerators.values().forEach(strategy -> strategy.generate(dto, sensorRuleService));
         }
     }
@@ -44,6 +44,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
                             null,
                             ActionType.SEND_ALERT
                     );
+                    log.info("SensorRule: {}", rule);
                     service.saveSensorRule(rule);
                 }
             },
@@ -60,6 +61,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
                             null,
                             ActionType.SEND_ALERT
                     );
+                    log.info("SensorRule: {}", rule);
                     service.saveSensorRule(rule);
                 }
             },
@@ -76,6 +78,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
                             dto.getThresholdAvgMax(),
                             ActionType.SEND_ALERT
                     );
+                    log.info("SensorRule: {}", rule);
                     service.saveSensorRule(rule);
                 }
             }

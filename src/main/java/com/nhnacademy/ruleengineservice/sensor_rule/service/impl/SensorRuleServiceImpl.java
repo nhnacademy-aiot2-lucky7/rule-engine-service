@@ -22,7 +22,9 @@ public class SensorRuleServiceImpl implements SensorRuleService {
     @Override
     public void saveSensorRule(SensorRule sensorRule) {
         String key = sensorRule.getRedisKey();
-        if(Boolean.TRUE.equals(redisTemplate.hasKey(key))) {
+        Boolean exists = redisTemplate.hasKey(key);
+
+        if(exists == null || !exists) {
             log.info("기존 룰이 존재합니다. 덮어씁니다. key={}", key);
         } else {
             log.info("신규 룰을 저장합니다. key={}", key);
@@ -34,6 +36,11 @@ public class SensorRuleServiceImpl implements SensorRuleService {
     @Override
     public SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType) {
         String key = String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
+        Boolean exists = redisTemplate.hasKey(key);
+
+        if(exists == null || !exists) {
+            throw new NotFoundException(String.format(EXCEPTION_MESSAGE, gatewayId, sensorId, dataType));
+        }
 
         return redisTemplate.opsForValue().get(key);
     }
@@ -54,10 +61,11 @@ public class SensorRuleServiceImpl implements SensorRuleService {
     @Override
     public void deleteSensorRule(String gatewayId, String sensorId, String dataType, String ruleType) {
         String key = String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
-        Boolean deleted = redisTemplate.delete(key);
+        Boolean exists = redisTemplate.hasKey(key);
 
-        if (!deleted) {
+        if (exists == null || ! exists) {
             throw new NotFoundException(String.format(EXCEPTION_MESSAGE, gatewayId, sensorId, dataType));
         }
+        redisTemplate.delete(key);
     }
 }

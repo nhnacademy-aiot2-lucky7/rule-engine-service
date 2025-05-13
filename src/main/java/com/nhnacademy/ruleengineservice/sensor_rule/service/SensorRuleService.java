@@ -3,8 +3,6 @@ package com.nhnacademy.ruleengineservice.sensor_rule.service;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 
-import java.util.Optional;
-
 /**
  * 센서 룰 서비스 인터페이스입니다.
  * 센서에 대한 룰을 저장하고 조회하는 기능을 제공합니다.

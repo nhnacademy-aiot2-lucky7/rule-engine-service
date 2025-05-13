@@ -41,27 +41,35 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
         if (!violatedRules.isEmpty()) {
             // 위반된 룰들의 이름과 상세 정보 생성
             for (SensorRule violatedRule : violatedRules) {
-                String eventDetail = String.format("센서 %s의 %s 룰 위반: 데이터값 %.2f은(는) %.2f%s %s.",
-                        dataDTO.getSensorId(),
-                        violatedRule.getRuleType(),
-                        dataDTO.getValue(),
-                        violatedRule.getValue(),
-                        violatedRule.getOperator().getDescription(),
-                        violatedRule.getAction().getDesc()
-                );
-
-                ViolatedRuleEventDTO dto = new ViolatedRuleEventDTO(
-                        EventLevel.WARN,
-                        eventDetail,
-                        dataDTO.getSensorId(),
-                        "센서",
-                        gatewayAdapter.getDepartmentIdByGatewayId(dataDTO.getGatewayId()),
-                        LocalDateTime.now());
+                String eventDetail = createEventDetail(dataDTO, violatedRule);
+                ViolatedRuleEventDTO dto = toEventDTO(dataDTO, eventDetail);
                 eventProducer.sendEvent(dto);
                 log.debug("센서 데이터가 위반한 룰들: {}", violatedRules);
             }
         } else {
             log.debug("센서 데이터가 모든 룰을 통과했습니다!");
         }
+    }
+
+    private String createEventDetail(DataDTO dataDTO, SensorRule violatedRule) {
+        return String.format("센서 %s의 %s 룰 위반: 데이터값 %.2f은(는) %.2f%s %s.",
+                dataDTO.getSensorId(),
+                violatedRule.getRuleType(),
+                dataDTO.getValue(),
+                violatedRule.getValue(),
+                violatedRule.getOperator().getDescription(),
+                violatedRule.getAction().getDesc()
+        );
+    }
+
+    private ViolatedRuleEventDTO toEventDTO(DataDTO dataDTO, String eventDetail) {
+        return new ViolatedRuleEventDTO(
+                EventLevel.WARN,
+                eventDetail,
+                dataDTO.getSensorId(),
+                "센서",
+                gatewayAdapter.getDepartmentIdByGatewayId(dataDTO.getGatewayId()),
+                LocalDateTime.now()
+        );
     }
 }
