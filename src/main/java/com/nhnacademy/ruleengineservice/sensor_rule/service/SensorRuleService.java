@@ -1,6 +1,7 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service;
 
 import com.nhnacademy.ruleengineservice.enums.RuleType;
+import com.nhnacademy.ruleengineservice.enums.SaveStatus;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 
 /**
@@ -12,7 +13,7 @@ import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
  */
 public interface SensorRuleService {
 
-    void saveSensorRule(SensorRule sensorRule);
+    SaveStatus saveSensorRule(SensorRule sensorRule);
     SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType);
     void updateSensorRule(SensorRule sensorRule);
     void deleteSensorRule(String gatewayId, String sensorId, String dataType, String ruleType);

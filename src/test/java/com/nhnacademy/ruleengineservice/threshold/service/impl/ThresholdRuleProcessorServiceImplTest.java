@@ -52,6 +52,7 @@ class ThresholdRuleProcessorServiceImplTest {
                 "gateway1",
                 "sensor1",
                 "temperature",
+                "온도",
                 20.00,
                 55.00,
                 35.00,
