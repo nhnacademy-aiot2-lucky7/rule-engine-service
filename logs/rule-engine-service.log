@@ -67,3 +67,61 @@
 2025-05-14T15:30:18.720+09:00  INFO 18046 --- [rule-engine-service] [main] c.n.r.c.controller.SensorDataController  : 수신 데이터: [DataDTO(gatewayId=gateway1, sensorId=sensor1, dataType=temperature, value=40.0, timestamp=20250505)]
 2025-05-14T15:30:19.131+09:00  INFO 18046 --- [rule-engine-service] [main] c.n.r.s.s.impl.SensorRuleServiceImpl     : 신규 룰을 저장합니다. key=rule:gateway:gateway1:sensor:sensor1:temperature:MAX
 2025-05-14T15:30:19.141+09:00  INFO 18046 --- [rule-engine-service] [main] c.n.r.s.s.impl.SensorRuleServiceImpl     : Updated sensor rule: rule:gateway:gateway1:sensor:sensor1:temperature:MAX
+2025-05-14T17:00:44.791+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.RuleEngineServiceApplicationTests  : Starting RuleEngineServiceApplicationTests using Java 21.0.4 with PID 23833 (started by nhnacademy in /home/nhnacademy/IdeaProjects/TeamProject_Lucky7/rule-engine-service)
+2025-05-14T17:00:44.794+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.RuleEngineServiceApplicationTests  : The following 1 profile is active: "dev"
+2025-05-14T17:00:45.374+09:00  INFO 23833 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-05-14T17:00:45.375+09:00  INFO 23833 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-05-14T17:00:45.405+09:00  INFO 23833 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 5 ms. Found 0 Redis repository interfaces.
+2025-05-14T17:00:45.662+09:00  INFO 23833 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-05-14T17:00:45.662+09:00  INFO 23833 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-05-14T17:00:45.677+09:00  INFO 23833 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2025-05-14T17:00:45.927+09:00  INFO 23833 --- [rule-engine-service] [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=4c01c0f3-350c-3a3e-84f5-5ffe66022cd7
+2025-05-14T17:00:47.789+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.RuleEngineServiceApplicationTests  : Started RuleEngineServiceApplicationTests in 3.732 seconds (process running for 7.09)
+2025-05-14T17:00:47.855+09:00  INFO 23833 --- [rule-engine-service] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.nhnacademy.ruleengineservice.RuleEngineServiceApplication for test class com.nhnacademy.ruleengineservice.common.controller.SensorDataControllerTest
+2025-05-14T17:00:47.903+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.c.c.SensorDataControllerTest       : Starting SensorDataControllerTest using Java 21.0.4 with PID 23833 (started by nhnacademy in /home/nhnacademy/IdeaProjects/TeamProject_Lucky7/rule-engine-service)
+2025-05-14T17:00:47.903+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.c.c.SensorDataControllerTest       : The following 1 profile is active: "dev"
+2025-05-14T17:00:48.072+09:00  INFO 23833 --- [rule-engine-service] [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-05-14T17:00:48.072+09:00  INFO 23833 --- [rule-engine-service] [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-05-14T17:00:48.073+09:00  INFO 23833 --- [rule-engine-service] [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2025-05-14T17:00:48.129+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.c.c.SensorDataControllerTest       : Started SensorDataControllerTest in 0.271 seconds (process running for 7.431)
+2025-05-14T17:00:48.231+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.c.controller.SensorDataController  : 수신 데이터: [DataDTO(gatewayId=gateway1, sensorId=sensor1, dataType=temperature, value=40.0, timestamp=20250505)]
+2025-05-14T17:00:48.823+09:00  INFO 23833 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [온도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:00:48.824+09:00  INFO 23833 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [습도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:00:48.829+09:00  INFO 23833 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [온도] 데이터에 대한 룰이 갱신되었습니다.
+2025-05-14T17:00:48.829+09:00  INFO 23833 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [습도] 데이터에 대한 룰이 갱신되었습니다.
+2025-05-14T17:00:48.833+09:00  INFO 23833 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [온도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:00:48.834+09:00  INFO 23833 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [습도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:00:49.012+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.s.s.impl.SensorRuleServiceImpl     : 신규 룰을 저장합니다. key=rule:gateway:gateway1:sensor:sensor1:temperature:MAX
+2025-05-14T17:00:49.025+09:00  INFO 23833 --- [rule-engine-service] [main] c.n.r.s.s.impl.SensorRuleServiceImpl     : Updated sensor rule: rule:gateway:gateway1:sensor:sensor1:temperature:MAX
+2025-05-14T17:00:49.050+09:00  WARN 23833 --- [rule-engine-service] [main] n.r.s.s.i.SensorRuleViolationServiceImpl : 룰 없음 - 게이트웨이: gateway1, 센서: sensor1, 데이터타입: temperature, 타입: MAX
+2025-05-14T17:00:49.051+09:00  WARN 23833 --- [rule-engine-service] [main] n.r.s.s.i.SensorRuleViolationServiceImpl : 룰 없음 - 게이트웨이: gateway1, 센서: sensor1, 데이터타입: temperature, 타입: MIN
+2025-05-14T17:00:49.051+09:00  WARN 23833 --- [rule-engine-service] [main] n.r.s.s.i.SensorRuleViolationServiceImpl : 룰 없음 - 게이트웨이: gateway1, 센서: sensor1, 데이터타입: temperature, 타입: AVG
+2025-05-14T17:02:55.978+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.RuleEngineServiceApplicationTests  : Starting RuleEngineServiceApplicationTests using Java 21.0.4 with PID 24178 (started by nhnacademy in /home/nhnacademy/IdeaProjects/TeamProject_Lucky7/rule-engine-service)
+2025-05-14T17:02:55.979+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.RuleEngineServiceApplicationTests  : The following 1 profile is active: "dev"
+2025-05-14T17:02:56.345+09:00  INFO 24178 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-05-14T17:02:56.345+09:00  INFO 24178 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-05-14T17:02:56.360+09:00  INFO 24178 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 3 ms. Found 0 Redis repository interfaces.
+2025-05-14T17:02:56.537+09:00  INFO 24178 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-05-14T17:02:56.537+09:00  INFO 24178 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-05-14T17:02:56.553+09:00  INFO 24178 --- [rule-engine-service] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2025-05-14T17:02:56.705+09:00  INFO 24178 --- [rule-engine-service] [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=4c01c0f3-350c-3a3e-84f5-5ffe66022cd7
+2025-05-14T17:02:57.716+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.RuleEngineServiceApplicationTests  : Started RuleEngineServiceApplicationTests in 2.077 seconds (process running for 2.975)
+2025-05-14T17:02:58.192+09:00  WARN 24178 --- [rule-engine-service] [main] n.r.s.s.i.SensorRuleViolationServiceImpl : 룰 없음 - 게이트웨이: gateway1, 센서: sensor1, 데이터타입: temperature, 타입: MAX
+2025-05-14T17:02:58.193+09:00  WARN 24178 --- [rule-engine-service] [main] n.r.s.s.i.SensorRuleViolationServiceImpl : 룰 없음 - 게이트웨이: gateway1, 센서: sensor1, 데이터타입: temperature, 타입: MIN
+2025-05-14T17:02:58.193+09:00  WARN 24178 --- [rule-engine-service] [main] n.r.s.s.i.SensorRuleViolationServiceImpl : 룰 없음 - 게이트웨이: gateway1, 센서: sensor1, 데이터타입: temperature, 타입: AVG
+2025-05-14T17:02:58.303+09:00  INFO 24178 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [온도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:02:58.304+09:00  INFO 24178 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [습도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:02:58.309+09:00  INFO 24178 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [온도] 데이터에 대한 룰이 갱신되었습니다.
+2025-05-14T17:02:58.310+09:00  INFO 24178 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [습도] 데이터에 대한 룰이 갱신되었습니다.
+2025-05-14T17:02:58.313+09:00  INFO 24178 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [온도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:02:58.313+09:00  INFO 24178 --- [rule-engine-service] [main] .n.r.s.s.i.SensorRuleGenerateServiceImpl : Event message: 센서 [sensor1]의 [습도] 데이터에 대한 룰이 생성되었습니다.
+2025-05-14T17:02:58.384+09:00  INFO 24178 --- [rule-engine-service] [main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.nhnacademy.ruleengineservice.RuleEngineServiceApplication for test class com.nhnacademy.ruleengineservice.common.controller.SensorDataControllerTest
+2025-05-14T17:02:58.421+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.c.c.SensorDataControllerTest       : Starting SensorDataControllerTest using Java 21.0.4 with PID 24178 (started by nhnacademy in /home/nhnacademy/IdeaProjects/TeamProject_Lucky7/rule-engine-service)
+2025-05-14T17:02:58.421+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.c.c.SensorDataControllerTest       : The following 1 profile is active: "dev"
+2025-05-14T17:02:58.605+09:00  INFO 24178 --- [rule-engine-service] [main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-05-14T17:02:58.605+09:00  INFO 24178 --- [rule-engine-service] [main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-05-14T17:02:58.606+09:00  INFO 24178 --- [rule-engine-service] [main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2025-05-14T17:02:58.665+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.c.c.SensorDataControllerTest       : Started SensorDataControllerTest in 0.279 seconds (process running for 3.924)
+2025-05-14T17:02:58.765+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.c.controller.SensorDataController  : 수신 데이터: [DataDTO(gatewayId=gateway1, sensorId=sensor1, dataType=temperature, value=40.0, timestamp=20250505)]
+2025-05-14T17:02:59.393+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.s.s.impl.SensorRuleServiceImpl     : 신규 룰을 저장합니다. key=rule:gateway:gateway1:sensor:sensor1:temperature:MAX
+2025-05-14T17:02:59.410+09:00  INFO 24178 --- [rule-engine-service] [main] c.n.r.s.s.impl.SensorRuleServiceImpl     : Updated sensor rule: rule:gateway:gateway1:sensor:sensor1:temperature:MAX

@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -32,7 +29,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
     private final GatewayAdapter gatewayAdapter;
     private final EventProducer eventProducer;
 
-    private final Map<RuleType, RuleGenerationStrategy> ruleGenerators = new HashMap<>();
+    private final Map<RuleType, RuleGenerationStrategy> ruleGenerators = new EnumMap<>(RuleType.class);
 
     @PostConstruct
     protected void initStrategies() {

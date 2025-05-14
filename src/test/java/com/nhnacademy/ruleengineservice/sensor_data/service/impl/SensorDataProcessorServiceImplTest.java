@@ -1,6 +1,5 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
-import ch.qos.logback.core.joran.spi.EventPlayer;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.enums.Operator;
