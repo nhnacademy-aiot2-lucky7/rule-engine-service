@@ -30,69 +30,67 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
     private final GatewayAdapter gatewayAdapter;
     private final EventProducer eventProducer;
 
-    private final Map<RuleType, RuleGenerationStrategy> ruleGenerators = new EnumMap<>(RuleType.class);
-
-    @PostConstruct
-    protected void initStrategies() {
-        ruleGenerators.put(RuleType.MIN, dto -> {
-            if (dto.getThresholdMin() != null) {
-                try {
-                    return SensorRule.builder()
-                            .gatewayId(dto.getGatewayId())
-                            .sensorId(dto.getSensorId())
-                            .dataType(dto.getDataTypeEnName())
-                            .ruleType(RuleType.MIN)
-                            .operator(Operator.LESS_THAN)
-                            .value(dto.getThresholdMin())
-                            .action(ActionType.SEND_ALERT)
-                            .build();
-                } catch (NullPointerException e) {
-                    throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+    /**
+     * 전략별 Rule 생성기 맵
+     */
+    private final Map<RuleType, RuleGenerationStrategy> ruleGenerators = Map.of(
+            RuleType.MIN, dto -> {
+                if (dto.getThresholdMin() != null) {
+                    try {
+                        return SensorRule.builder()
+                                .gatewayId(dto.getGatewayId())
+                                .sensorId(dto.getSensorId())
+                                .dataType(dto.getDataTypeEnName())
+                                .ruleType(RuleType.MIN)
+                                .operator(Operator.LESS_THAN)
+                                .value(dto.getThresholdMin())
+                                .action(ActionType.SEND_ALERT)
+                                .build();
+                    } catch (NullPointerException e) {
+                        throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                    }
                 }
-            }
-            return null;
-        });
-
-        ruleGenerators.put(RuleType.MAX, dto -> {
-            if (dto.getThresholdMax() != null) {
-                try {
-                    return SensorRule.builder()
-                            .gatewayId(dto.getGatewayId())
-                            .sensorId(dto.getSensorId())
-                            .dataType(dto.getDataTypeEnName())
-                            .ruleType(RuleType.MAX)
-                            .operator(Operator.GREATER_THAN)
-                            .value(dto.getThresholdMax())
-                            .action(ActionType.SEND_ALERT)
-                            .build();
-                } catch (NullPointerException e) {
-                    throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                return null;
+            },
+            RuleType.MAX, dto -> {
+                if (dto.getThresholdMax() != null) {
+                    try {
+                        return SensorRule.builder()
+                                .gatewayId(dto.getGatewayId())
+                                .sensorId(dto.getSensorId())
+                                .dataType(dto.getDataTypeEnName())
+                                .ruleType(RuleType.MAX)
+                                .operator(Operator.GREATER_THAN)
+                                .value(dto.getThresholdMax())
+                                .action(ActionType.SEND_ALERT)
+                                .build();
+                    } catch (NullPointerException e) {
+                        throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                    }
                 }
-            }
-            return null;
-        });
-
-        ruleGenerators.put(RuleType.AVG, dto -> {
-            if (dto.getThresholdAvgMin() != null && dto.getThresholdAvgMax() != null) {
-                try {
-                    return SensorRule.builder()
-                            .gatewayId(dto.getGatewayId())
-                            .sensorId(dto.getSensorId())
-                            .dataType(dto.getDataTypeEnName())
-                            .ruleType(RuleType.AVG)
-                            .operator(Operator.OUT_OF_BOUND)
-                            .value(dto.getThresholdAvg())
-                            .minValue(dto.getThresholdAvgMin())
-                            .maxValue(dto.getThresholdAvgMax())
-                            .action(ActionType.SEND_ALERT)
-                            .build();
-                } catch (NullPointerException e) {
-                    throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                return null;
+            },
+            RuleType.AVG, dto -> {
+                if (dto.getThresholdAvgMin() != null && dto.getThresholdAvgMax() != null) {
+                    try {
+                        return SensorRule.builder()
+                                .gatewayId(dto.getGatewayId())
+                                .sensorId(dto.getSensorId())
+                                .dataType(dto.getDataTypeEnName())
+                                .ruleType(RuleType.AVG)
+                                .operator(Operator.OUT_OF_BOUND)
+                                .value(dto.getThresholdAvg())
+                                .minValue(dto.getThresholdAvgMin())
+                                .maxValue(dto.getThresholdAvgMax())
+                                .action(ActionType.SEND_ALERT)
+                                .build();
+                    } catch (NullPointerException e) {
+                        throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                    }
                 }
+                return null;
             }
-            return null;
-        });
-    }
+    );
 
     @Override
     public void generateRules(List<ThresholdAnalysisDTO> analysisDTOList) {

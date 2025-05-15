@@ -72,8 +72,6 @@ class SensorRuleGenerateServiceImplTest {
                 75.00
         );
         analysisDTOList = Arrays.asList(analysisDTO1, analysisDTO2);
-
-        sensorRuleGenerateService.initStrategies();
     }
 
     @Test
