@@ -5,6 +5,7 @@ import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor.adapter.SensorAdapter;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleGenerateService;
 import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
+import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdRequest;
 import com.nhnacademy.ruleengineservice.threshold.service.ThresholdRuleProcessorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,8 @@ public class ThresholdRuleProcessorServiceImpl implements ThresholdRuleProcessor
     private final GatewayAdapter gatewayAdapter;
 
     @Override
-    public void generateRulesFromAnalysis(String gatewayId) {
+    public void generateRulesFromAnalysis(ThresholdRequest request) {
+        String gatewayId = request.getGatewayId();
         List<ThresholdAnalysisDTO> analysisDTOList = sensorAdapter.getAnalysisResult(gatewayId);
 
         if (analysisDTOList == null || analysisDTOList.isEmpty()) {

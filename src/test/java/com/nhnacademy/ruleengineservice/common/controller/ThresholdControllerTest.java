@@ -1,8 +1,8 @@
 package com.nhnacademy.ruleengineservice.common.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
-import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
+import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdRequest;
+import com.nhnacademy.ruleengineservice.threshold.service.ThresholdRuleProcessorService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -18,44 +18,40 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(SensorDataController.class)
-class SensorDataControllerTest {
+@WebMvcTest(controllers = ThresholdController.class)
+class ThresholdControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private SensorDataProcessorService processorService;
+    private ThresholdRuleProcessorService processorService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("DTO 형식대로 잘 받아왔는지 확인")
-    void testReceiveSensorData() throws Exception {
-        DataDTO dataDTO = new DataDTO(
-                "gateway-01",
-                "sensor-01",
-                "temperature",
-                40.00,
-                20250505L
-        );
+    @DisplayName("gatewayId와 status가 올바르게 전달되는지 확인")
+    void testReceiveThresholdResult() throws Exception{
+        String gatewayId = "gateway-01";
+        String status = "분석완료";
 
-        mockMvc.perform(post("/rule_engine/data")
+        ThresholdRequest request = new ThresholdRequest();
+        request.setGatewayId(gatewayId);
+        request.setStatus(status);
+
+        mockMvc.perform(post("/rule_engine/webhook/threshold_complete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dataDTO)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        ArgumentCaptor<DataDTO> dataCaptor = ArgumentCaptor.forClass(DataDTO.class);
+        ArgumentCaptor<ThresholdRequest> requestCaptor = ArgumentCaptor.forClass(ThresholdRequest.class);
 
-        verify(processorService).process(dataCaptor.capture());
+        verify(processorService).generateRulesFromAnalysis(requestCaptor.capture());
 
-        DataDTO captorRequest = dataCaptor.getValue();
+        ThresholdRequest captorRequest = requestCaptor.getValue();
         assertEquals("gateway-01", captorRequest.getGatewayId());
-        assertEquals("sensor-01", captorRequest.getSensorId());
-        assertEquals("temperature", captorRequest.getDataType());
-        assertEquals(40.00, captorRequest.getValue());
-        assertEquals(20250505L, captorRequest.getTimestamp());
+        assertEquals("분석완료", captorRequest.getStatus());
     }
 }

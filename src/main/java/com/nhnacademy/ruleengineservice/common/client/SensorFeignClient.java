@@ -11,6 +11,6 @@ import java.util.List;
 @FeignClient(name = "sensor-service", url = "${sensor.service.url}")
 public interface SensorFeignClient {
 
-    @GetMapping("/sensor-service/analysis-result/{gatewayId}")
-    List<ThresholdAnalysisDTO> getAnalysisResult(@PathVariable("gatewayId") String gatewayId);
+    @GetMapping("/sensor-service/api/v1/threshold-histories/{gateway-id}")
+    List<ThresholdAnalysisDTO> getAnalysisResult(@PathVariable("gateway-id") String gatewayId);
 }

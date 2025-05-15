@@ -6,6 +6,7 @@ import com.nhnacademy.ruleengineservice.sensor.adapter.SensorAdapter;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleGenerateService;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
 import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
+import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,10 +65,15 @@ class ThresholdRuleProcessorServiceImplTest {
     @DisplayName("게이트웨이 아이디로 분석된 값을 가져와 룰 생성하기")
     void testGenerateRulesFromAnalysis() {
         String gatewayId = "gateway1";
+        String status = "분석완료";
+
+        ThresholdRequest request = new ThresholdRequest();
+        request.setGatewayId(gatewayId);
+        request.setStatus(status);
 
         when(sensorAdapter.getAnalysisResult(gatewayId)).thenReturn(analysisDTOList);
 
-        thresholdRuleProcessorService.generateRulesFromAnalysis(gatewayId);
+        thresholdRuleProcessorService.generateRulesFromAnalysis(request);
 
         verify(sensorAdapter).getAnalysisResult(gatewayId);
         verify(sensorRuleGenerateService).generateRules(analysisDTOList);
@@ -78,11 +84,16 @@ class ThresholdRuleProcessorServiceImplTest {
     @DisplayName("해당 게이트웨이 아이디에 분석된 값이 없거나 가져오기 실패 - 예외 발생")
     void testGenerateRulesFromAnalysis_NotFound() {
         String gatewayId = "gateway1";
+        String status = "분석완료";
+
+        ThresholdRequest request = new ThresholdRequest();
+        request.setGatewayId(gatewayId);
+        request.setStatus(status);
 
         when(sensorAdapter.getAnalysisResult(gatewayId)).thenReturn(new ArrayList<>());
 
         assertThatThrownBy(() ->
-                thresholdRuleProcessorService.generateRulesFromAnalysis(gatewayId)
+                thresholdRuleProcessorService.generateRulesFromAnalysis(request)
         ).isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("게이트웨이 [gateway1]에 대한 분석 결과가 없거나 가져오기에 실패했습니다.");
     }
