@@ -24,6 +24,7 @@ import java.util.*;
 public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService {
 
     private static final String EVENT_DETAIL_TEMPLATE = "센서 [%s]의 [%s] 데이터에 대한 룰이 %s되었습니다.";
+    private static final String SENSOR_RULE_CREATION_MISSING_REQUIRED = "SensorRule 생성 실패: 필수값이 누락되었습니다.";
     private static final String SOURCE_TYPE = "센서";
 
     private final SensorRuleService sensorRuleService;
@@ -47,7 +48,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
                                 .action(ActionType.SEND_ALERT)
                                 .build();
                     } catch (NullPointerException e) {
-                        throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                        throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
                     }
                 }
                 return null;
@@ -65,7 +66,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
                                 .action(ActionType.SEND_ALERT)
                                 .build();
                     } catch (NullPointerException e) {
-                        throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                        throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
                     }
                 }
                 return null;
@@ -85,7 +86,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
                                 .action(ActionType.SEND_ALERT)
                                 .build();
                     } catch (NullPointerException e) {
-                        throw new SensorRuleCreationException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+                        throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
                     }
                 }
                 return null;
