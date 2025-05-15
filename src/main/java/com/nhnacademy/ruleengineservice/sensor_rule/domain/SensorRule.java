@@ -1,6 +1,7 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.nhnacademy.ruleengineservice.common.exception.MissingRequiredSensorRuleFieldException;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
@@ -15,23 +16,35 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SensorRule {
 
-    // 센서 식별 정보
+    // 필수값
     private String gatewayId;
     private String sensorId;
     private String dataType; // 예: 온도, 습도 등
-
-    // 룰 정의
     private RuleType ruleType; // 예: max, min, avg 등
     private Operator operator; // 예: 초과, 미만 등
+    private ActionType action; // 룰 위반 시 수행할 액션
     private Double value; // 기준 값
+
     private Double minValue; // 기준 값의 최소값 (선택적)
     private Double maxValue; // 기준 값의 최소값 (선택적)
-    private ActionType action; // 룰 위반 시 수행할 액션
 
-    // Static 팩토리 메소드
-    public static SensorRule createRule(String gatewayId, String sensorId, String dataType,
-                                  RuleType ruleType, Operator operator,
-                                  Double value, Double minValue, Double maxValue, ActionType action) {
+    public static SensorRule createRuleWithValue(String gatewayId, String sensorId, String dataType, RuleType ruleType,
+                                                 Operator operator, Double value, ActionType actionType) {
+        validateRequired(gatewayId, sensorId, dataType, ruleType, operator, value, actionType);
+        return SensorRule.builder()
+                .gatewayId(gatewayId)
+                .sensorId(sensorId)
+                .dataType(dataType)
+                .ruleType(ruleType)
+                .operator(operator)
+                .value(value)
+                .action(actionType)
+                .build();
+    }
+
+    public static SensorRule createRuleWithRange(String gatewayId, String sensorId, String dataType, RuleType ruleType,
+                                                 Operator operator, Double value, Double minValue, Double maxValue, ActionType actionType) {
+        validateRequired(gatewayId, sensorId, dataType, ruleType, operator, value, minValue, maxValue, actionType);
         return SensorRule.builder()
                 .gatewayId(gatewayId)
                 .sensorId(sensorId)
@@ -41,12 +54,20 @@ public class SensorRule {
                 .value(value)
                 .minValue(minValue)
                 .maxValue(maxValue)
-                .action(action)
+                .action(actionType)
                 .build();
     }
 
     // 센서 룰의 Redis 키를 생성하는 메소드
     public String getRedisKey() {
         return String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
+    }
+
+    private static void validateRequired(Object... values) {
+        for (Object v : values) {
+            if (v == null) {
+                throw new MissingRequiredSensorRuleFieldException("SensorRule 생성 실패: 필수값이 누락되었습니다.");
+            }
+        }
     }
 }

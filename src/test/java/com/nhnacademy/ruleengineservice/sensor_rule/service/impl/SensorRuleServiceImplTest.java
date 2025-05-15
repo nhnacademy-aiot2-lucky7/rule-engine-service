@@ -35,9 +35,14 @@ class SensorRuleServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sensorRule = SensorRule.createRule(
-                "gateway1", "sensor1", "temperature",
-                RuleType.MAX, Operator.GREATER_THAN, 60.0, null,null, ActionType.LOG_WARNING
+        sensorRule = SensorRule.createRuleWithValue(
+                "gateway1",
+                "sensor1",
+                "temperature",
+                RuleType.MAX,
+                Operator.GREATER_THAN,
+                60.0,
+                ActionType.LOG_WARNING
         );
 
         lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);

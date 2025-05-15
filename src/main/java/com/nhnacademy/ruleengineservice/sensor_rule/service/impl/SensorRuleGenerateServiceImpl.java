@@ -35,15 +35,13 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
     protected void initStrategies() {
         ruleGenerators.put(RuleType.MIN, dto -> {
             if (dto.getThresholdMin() != null) {
-                return SensorRule.createRule(
+                return SensorRule.createRuleWithValue(
                         dto.getGatewayId(),
                         dto.getSensorId(),
                         dto.getDataTypeEnName(),
                         RuleType.MIN,
                         Operator.LESS_THAN,
                         dto.getThresholdMin(),
-                        null,
-                        null,
                         ActionType.SEND_ALERT
                 );
             }
@@ -52,15 +50,13 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
 
         ruleGenerators.put(RuleType.MAX, dto -> {
             if (dto.getThresholdMax() != null) {
-                return SensorRule.createRule(
+                return SensorRule.createRuleWithValue(
                         dto.getGatewayId(),
                         dto.getSensorId(),
                         dto.getDataTypeEnName(),
                         RuleType.MAX,
                         Operator.GREATER_THAN,
                         dto.getThresholdMax(),
-                        null,
-                        null,
                         ActionType.SEND_ALERT
                 );
             }
@@ -69,7 +65,7 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
 
         ruleGenerators.put(RuleType.AVG, dto -> {
             if (dto.getThresholdAvgMin() != null && dto.getThresholdAvgMax() != null) {
-                return SensorRule.createRule(
+                return SensorRule.createRuleWithRange(
                         dto.getGatewayId(),
                         dto.getSensorId(),
                         dto.getDataTypeEnName(),

@@ -36,31 +36,27 @@ class SensorRuleViolationServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        maxRule = SensorRule.createRule(
+        maxRule = SensorRule.createRuleWithValue(
                 "gateway1",
                 "sensor1",
                 "temperature",
                 RuleType.MAX,
                 Operator.GREATER_THAN,
                 30.0,
-                null,
-                null,
                 ActionType.LOG_WARNING
         );
 
-        minRule = SensorRule.createRule(
+        minRule = SensorRule.createRuleWithValue(
                 "gateway1",
                 "sensor1",
                 "temperature",
                 RuleType.MIN,
                 Operator.LESS_THAN,
                 22.0,
-                null,
-                null,
                 ActionType.LOG_WARNING
         );
 
-        avgRule = SensorRule.createRule(
+        avgRule = SensorRule.createRuleWithRange(
                 "gateway1",
                 "sensor1",
                 "temperature",

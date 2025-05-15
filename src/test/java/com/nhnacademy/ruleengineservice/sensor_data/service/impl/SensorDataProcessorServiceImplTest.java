@@ -69,15 +69,13 @@ class SensorDataProcessorServiceImplTest {
     @Test
     @DisplayName("위반한 룰이 있는 경우")
     void processValidTest() {
-        SensorRule sensorRule1 = SensorRule.createRule(
+        SensorRule sensorRule1 = SensorRule.createRuleWithValue(
                 "gateway1",
                 "sensor1",
                 "temperature",
                 RuleType.MIN,
                 Operator.LESS_THAN,
                 50.0,
-                null,
-                null,
                 ActionType.SEND_ALERT
         );
 
