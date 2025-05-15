@@ -1,7 +1,7 @@
 package com.nhnacademy.ruleengineservice.common.advice;
 
 import com.nhnacademy.ruleengineservice.common.exception.CommonHttpException;
-import com.nhnacademy.ruleengineservice.common.exception.MissingRequiredSensorRuleFieldException;
+import com.nhnacademy.ruleengineservice.common.exception.SensorRuleCreationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +38,8 @@ public class CommonAdvice {
                 .body("Internal Server Error 발생\n" + stackTrace);
     }
 
-    @ExceptionHandler(MissingRequiredSensorRuleFieldException.class)
-    public ResponseEntity<String> handleMissingRequiredFieldException(MissingRequiredSensorRuleFieldException e) {
+    @ExceptionHandler(SensorRuleCreationException.class)
+    public ResponseEntity<String> handleSensorRuleCreationException(SensorRuleCreationException e) {
         log.warn("SensorRule 필수값 누락 예외 발생: {}", e.getMessage());
 
         return ResponseEntity

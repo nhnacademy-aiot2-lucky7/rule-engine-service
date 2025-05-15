@@ -69,15 +69,15 @@ class SensorDataProcessorServiceImplTest {
     @Test
     @DisplayName("위반한 룰이 있는 경우")
     void processValidTest() {
-        SensorRule sensorRule1 = SensorRule.createRuleWithValue(
-                "gateway1",
-                "sensor1",
-                "temperature",
-                RuleType.MIN,
-                Operator.LESS_THAN,
-                50.0,
-                ActionType.SEND_ALERT
-        );
+        SensorRule sensorRule1 = SensorRule.builder()
+                .gatewayId("gateway1")
+                .sensorId("sensor1")
+                .dataType("temperature")
+                .ruleType(RuleType.MIN)
+                .operator(Operator.LESS_THAN)
+                .value(50.0)
+                .action(ActionType.SEND_ALERT)
+                .build();
 
         when(violationChecker.getViolatedRules(any(DataDTO.class))).thenReturn(List.of(sensorRule1));
         when(gatewayAdapter.getDepartmentIdByGatewayId(any(String.class))).thenReturn("department1");
