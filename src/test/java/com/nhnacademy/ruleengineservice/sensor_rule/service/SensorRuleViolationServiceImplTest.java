@@ -36,41 +36,40 @@ class SensorRuleViolationServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        maxRule = SensorRule.createRule(
-                "gateway1",
-                "sensor1",
-                "temperature",
-                RuleType.MAX,
-                Operator.GREATER_THAN,
-                30.0,
-                null,
-                null,
-                ActionType.LOG_WARNING
-        );
+        minRule = SensorRule.builder()
+                .gatewayId("gateway1")
+                .sensorId("sensor1")
+                .dataTypeEnName("temperature")
+                .dataTypeKrName("온도")
+                .ruleType(RuleType.MIN)
+                .operator(Operator.LESS_THAN)
+                .value(22.0)
+                .action(ActionType.LOG_WARNING)
+                .build();
 
-        minRule = SensorRule.createRule(
-                "gateway1",
-                "sensor1",
-                "temperature",
-                RuleType.MIN,
-                Operator.LESS_THAN,
-                22.0,
-                null,
-                null,
-                ActionType.LOG_WARNING
-        );
+        maxRule = SensorRule.builder()
+                .gatewayId("gateway1")
+                .sensorId("sensor1")
+                .dataTypeEnName("temperature")
+                .dataTypeKrName("온도")
+                .ruleType(RuleType.MAX)
+                .operator(Operator.GREATER_THAN)
+                .value(30.0)
+                .action(ActionType.LOG_WARNING)
+                .build();
 
-        avgRule = SensorRule.createRule(
-                "gateway1",
-                "sensor1",
-                "temperature",
-                RuleType.AVG,
-                Operator.LESS_THAN,
-                25.0,
-                20.0,
-                30.0,
-                ActionType.LOG_WARNING
-        );
+        avgRule = SensorRule.builder()
+                .gatewayId("gateway1")
+                .sensorId("sensor1")
+                .dataTypeEnName("temperature")
+                .dataTypeKrName("온도")
+                .ruleType(RuleType.AVG)
+                .operator(Operator.OUT_OF_BOUND)
+                .value(25.0)
+                .minValue(20.0)
+                .maxValue(30.0)
+                .action(ActionType.LOG_WARNING)
+                .build();
     }
 
     @Test
@@ -89,8 +88,8 @@ class SensorRuleViolationServiceImplTest {
                 20250505L
         );
 
-        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MAX)).thenReturn(maxRule);
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MIN)).thenReturn(minRule);
+        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MAX)).thenReturn(maxRule);
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.AVG)).thenReturn(avgRule);
 
         List<SensorRule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
@@ -116,13 +115,13 @@ class SensorRuleViolationServiceImplTest {
                 20250505L
         );
 
-        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MAX)).thenReturn(maxRule);
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MIN)).thenReturn(minRule);
+        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MAX)).thenReturn(maxRule);
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.AVG)).thenReturn(avgRule);
 
         List<SensorRule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
-        assertThat(violatedRules).containsExactlyInAnyOrder(maxRule);
+        assertThat(violatedRules).containsExactlyInAnyOrder(maxRule, avgRule);
         verify(sensorRuleService, times(3)).getSensorRule(anyString(), anyString(), anyString(), any());
     }
 

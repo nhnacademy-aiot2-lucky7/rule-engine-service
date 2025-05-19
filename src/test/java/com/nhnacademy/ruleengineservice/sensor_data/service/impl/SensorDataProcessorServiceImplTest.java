@@ -1,6 +1,5 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
-import ch.qos.logback.core.joran.spi.EventPlayer;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.enums.Operator;
@@ -70,17 +69,16 @@ class SensorDataProcessorServiceImplTest {
     @Test
     @DisplayName("위반한 룰이 있는 경우")
     void processValidTest() {
-        SensorRule sensorRule1 = SensorRule.createRule(
-                "gateway1",
-                "sensor1",
-                "temperature",
-                RuleType.MIN,
-                Operator.LESS_THAN,
-                50.0,
-                null,
-                null,
-                ActionType.SEND_ALERT
-        );
+        SensorRule sensorRule1 = SensorRule.builder()
+                .gatewayId("gateway1")
+                .sensorId("sensor1")
+                .dataTypeEnName("temperature")
+                .dataTypeKrName("온도")
+                .ruleType(RuleType.MIN)
+                .operator(Operator.LESS_THAN)
+                .value(50.0)
+                .action(ActionType.SEND_ALERT)
+                .build();
 
         when(violationChecker.getViolatedRules(any(DataDTO.class))).thenReturn(List.of(sensorRule1));
         when(gatewayAdapter.getDepartmentIdByGatewayId(any(String.class))).thenReturn("department1");
@@ -95,7 +93,7 @@ class SensorDataProcessorServiceImplTest {
         Assertions.assertAll(
                 ()->{
                     assertEquals(EventLevel.WARN, sentMessage.getEventLevel());
-                    assertEquals("센서 sensor1의 MIN 룰 위반: 데이터값 40.00은(는) 50.00미만이므로 알림전송.", sentMessage.getEventDetails());
+                    assertEquals("센서 [sensor1]의 [온도]데이터에 대한 MIN 룰 위반: 데이터값 40.00은(는) 50.00미만이므로 알림전송.", sentMessage.getEventDetails());
                     assertEquals("sensor1", sentMessage.getSourceId());
                     assertEquals("센서", sentMessage.getSourceType());
                     assertEquals("department1", sentMessage.getDepartmentId());

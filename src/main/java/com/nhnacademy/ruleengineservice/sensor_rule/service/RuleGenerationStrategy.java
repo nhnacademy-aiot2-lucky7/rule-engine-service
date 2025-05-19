@@ -1,7 +1,9 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service;
 
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
 
+@FunctionalInterface
 public interface RuleGenerationStrategy {
-    void generate(ThresholdAnalysisDTO dto, SensorRuleService sensorRuleService);
+    SensorRule generate(ThresholdAnalysisDTO dto);
 }

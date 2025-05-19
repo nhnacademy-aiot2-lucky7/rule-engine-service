@@ -35,10 +35,16 @@ class SensorRuleServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        sensorRule = SensorRule.createRule(
-                "gateway1", "sensor1", "temperature",
-                RuleType.MAX, Operator.GREATER_THAN, 60.0, null,null, ActionType.LOG_WARNING
-        );
+        sensorRule = SensorRule.builder()
+                .gatewayId("gateway1")
+                .sensorId("sensor1")
+                .dataTypeEnName("temperature")
+                .dataTypeKrName("온도")
+                .ruleType(RuleType.MAX)
+                .operator(Operator.GREATER_THAN)
+                .value(60.0)
+                .action(ActionType.LOG_WARNING)
+                .build();
 
         lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }
@@ -55,6 +61,8 @@ class SensorRuleServiceImplTest {
     @DisplayName("getSensorRule: 센서 룰 조회 성공")
     void getSensorRule_shouldReturnRule_whenExists() {
         String key = sensorRule.getRedisKey();
+
+        when(redisTemplate.hasKey(key)).thenReturn(true);
         when(valueOperations.get(key)).thenReturn(sensorRule);
 
         SensorRule result = sensorRuleService.getSensorRule(
@@ -64,17 +72,18 @@ class SensorRuleServiceImplTest {
         Assertions.assertEquals(sensorRule, result);
     }
 
-/*    @Test
+    @Test
     @DisplayName("getSensorRule: 센서 룰 존재하지 않아 예외 발생")
     void getSensorRule_shouldThrowException_whenNotFound() {
         String key = sensorRule.getRedisKey();
-        when(valueOperations.get(key)).thenReturn(null);
+
+        when(redisTemplate.hasKey(key)).thenReturn(null);
 
         assertThatThrownBy(() ->
                 sensorRuleService.getSensorRule("gateway1", "sensor1", "temperature", RuleType.MAX)
         ).isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("gateway1, sensor1, temperature에 해당하는 룰이 없습니다.");
-    }*/
+                .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: gateway1, Sensor: sensor1, DataType: temperature");
+    }
 
     @Test
     @DisplayName("updateSensorRule: 기존 룰이 존재하여 업데이트 성공")
@@ -103,6 +112,8 @@ class SensorRuleServiceImplTest {
     @DisplayName("deleteSensorRule: 룰 삭제 성공")
     void deleteSensorRule_shouldDeleteSuccessfully() {
         String key = sensorRule.getRedisKey();
+
+        when(redisTemplate.hasKey(key)).thenReturn(true);
         when(redisTemplate.delete(key)).thenReturn(true);
 
         sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", "MAX");
@@ -111,10 +122,11 @@ class SensorRuleServiceImplTest {
     }
 
     @Test
-    @DisplayName("deleteSensorRule: 룰 삭제 실패로 예외 발생")
+    @DisplayName("deleteSensorRule: 룰 삭제 시 조회 실패로 예외 발생")
     void deleteSensorRule_shouldThrowException_whenDeleteFails() {
         String key = sensorRule.getRedisKey();
-        when(redisTemplate.delete(key)).thenReturn(false);
+
+        when(redisTemplate.hasKey(key)).thenReturn(false);
 
         assertThatThrownBy(() ->
                 sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", "MAX")

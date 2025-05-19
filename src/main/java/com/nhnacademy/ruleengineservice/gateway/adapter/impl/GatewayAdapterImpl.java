@@ -20,7 +20,7 @@ public class GatewayAdapterImpl implements GatewayAdapter {
         try {
             return gatewayFeignClient.getDepartmentIdByGatewayId(gatewayId);
         } catch (Exception e) {
-            log.warn("[Feign] 게이트웨이에서 departmentId 조회 실패: {}", e.getMessage(), e);
+            log.warn("[Feign] 게이트웨이에서 departmentId 조회 실패 - gatewayId: {}", gatewayId);
             return null;
         }
     }
@@ -31,7 +31,7 @@ public class GatewayAdapterImpl implements GatewayAdapter {
             gatewayFeignClient.activateGateway(gatewayId);
             log.info("게이트웨이 [{}] 활성화 완료", gatewayId);
         } catch (Exception e) {
-            log.error("게이트웨이 [{}] 활성화 실패: {}", gatewayId, e.getMessage(), e);
+            log.warn("게이트웨이 [{}] 활성화 실패", gatewayId);
         }
     }
 }

@@ -34,10 +34,19 @@ public class SensorRuleViolationServiceImpl implements SensorRuleViolationServic
             if (rule != null) {
                 Operator operator = rule.getOperator();
                 double targetvalue = rule.getValue();
-                double sensorValue = dataDTO.getValue();
-                boolean isValid = operator.compare(dataDTO.getValue(), targetvalue);
+                Double targetMinValue = rule.getMinValue();
+                Double targetMaxValue = rule.getMaxValue();
 
-                log.debug("▶ Rule 위반검사 -  타입: {}, 연산자: {}, 기준값: {}, 센서값: {} → 결과: {}",
+                double sensorValue = dataDTO.getValue();
+                boolean isValid = false;
+
+                if (rule.getRuleType().equals(RuleType.AVG)) {
+                    isValid = operator.compare(sensorValue, targetMinValue, targetMaxValue);
+                } else {
+                    isValid = operator.compare(sensorValue, targetvalue);
+                }
+
+                log.info("▶ Rule 위반검사 -  타입: {}, 연산자: {}, 기준값: {}, 센서값: {} → 결과: {}",
                         ruleType,
                         operator.getSymbol(),
                         String.format("%.2f", targetvalue),
