@@ -118,7 +118,8 @@ class SensorRuleGenerateServiceImplTest {
                     assertTrue(rules.stream().anyMatch(rule ->
                             rule.getGatewayId().equals("gateway1")
                                     && rule.getSensorId().equals("sensor1")
-                                    && rule.getDataType().equals("temperature")
+                                    && rule.getDataTypeEnName().equals("temperature")
+                                    && rule.getDataTypeKrName().equals("온도")
                                     && rule.getRuleType().equals(RuleType.MIN)
                                     && rule.getOperator().equals(Operator.LESS_THAN)
                                     && rule.getValue().equals(20.00)
@@ -131,7 +132,8 @@ class SensorRuleGenerateServiceImplTest {
                     assertTrue(rules.stream().anyMatch(rule ->
                             rule.getGatewayId().equals("gateway1")
                                     && rule.getSensorId().equals("sensor1")
-                                    && rule.getDataType().equals("temperature")
+                                    && rule.getDataTypeEnName().equals("temperature")
+                                    && rule.getDataTypeKrName().equals("온도")
                                     && rule.getRuleType().equals(RuleType.MAX)
                                     && rule.getOperator().equals(Operator.GREATER_THAN)
                                     && rule.getValue().equals(55.00)
@@ -144,7 +146,8 @@ class SensorRuleGenerateServiceImplTest {
                     assertTrue(rules.stream().anyMatch(rule ->
                             rule.getGatewayId().equals("gateway1")
                                     && rule.getSensorId().equals("sensor1")
-                                    && rule.getDataType().equals("temperature")
+                                    && rule.getDataTypeEnName().equals("temperature")
+                                    && rule.getDataTypeKrName().equals("온도")
                                     && rule.getRuleType().equals(RuleType.AVG)
                                     && rule.getOperator().equals(Operator.OUT_OF_BOUND)
                                     && rule.getValue().equals(35.00)
@@ -157,7 +160,8 @@ class SensorRuleGenerateServiceImplTest {
                     assertTrue(rules.stream().anyMatch(rule ->
                             rule.getGatewayId().equals("gateway1")
                                     && rule.getSensorId().equals("sensor1")
-                                    && rule.getDataType().equals("humidity")
+                                    && rule.getDataTypeEnName().equals("humidity")
+                                    && rule.getDataTypeKrName().equals("습도")
                                     && rule.getRuleType().equals(RuleType.MIN)
                                     && rule.getOperator().equals(Operator.LESS_THAN)
                                     && rule.getValue().equals(25.00)
@@ -170,7 +174,8 @@ class SensorRuleGenerateServiceImplTest {
                     assertTrue(rules.stream().anyMatch(rule ->
                             rule.getGatewayId().equals("gateway1")
                                     && rule.getSensorId().equals("sensor1")
-                                    && rule.getDataType().equals("humidity")
+                                    && rule.getDataTypeEnName().equals("humidity")
+                                    && rule.getDataTypeKrName().equals("습도")
                                     && rule.getRuleType().equals(RuleType.MAX)
                                     && rule.getOperator().equals(Operator.GREATER_THAN)
                                     && rule.getValue().equals(70.00)
@@ -183,7 +188,8 @@ class SensorRuleGenerateServiceImplTest {
                     assertTrue(rules.stream().anyMatch(rule ->
                             rule.getGatewayId().equals("gateway1")
                                     && rule.getSensorId().equals("sensor1")
-                                    && rule.getDataType().equals("humidity")
+                                    && rule.getDataTypeEnName().equals("humidity")
+                                    && rule.getDataTypeKrName().equals("습도")
                                     && rule.getRuleType().equals(RuleType.AVG)
                                     && rule.getOperator().equals(Operator.OUT_OF_BOUND)
                                     && rule.getValue().equals(50.00)

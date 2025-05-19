@@ -3,12 +3,14 @@ package com.nhnacademy.ruleengineservice.integration_test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.ruleengineservice.enums.SaveStatus;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
+import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
 import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor.adapter.SensorAdapter;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
 import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
 import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdRequest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +47,10 @@ class ThresholdIntegrationTest {
     private SensorRuleService sensorRuleService;
 
     @MockitoBean
-    private com.nhnacademy.ruleengineservice.event.producer.EventProducer eventProducer;
+    private EventProducer eventProducer;
 
     @Test
+    @DisplayName("데이터 분석외 완료되었을 때 분석 데이터를 받아와 룰 생성")
     void thresholdWebhook_shouldProcessSuccessfully() throws Exception {
         // Given
         String gatewayId = "gateway-001";

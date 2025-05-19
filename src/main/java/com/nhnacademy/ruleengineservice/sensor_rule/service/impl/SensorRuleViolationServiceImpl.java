@@ -46,7 +46,7 @@ public class SensorRuleViolationServiceImpl implements SensorRuleViolationServic
                     isValid = operator.compare(sensorValue, targetvalue);
                 }
 
-                log.debug("▶ Rule 위반검사 -  타입: {}, 연산자: {}, 기준값: {}, 센서값: {} → 결과: {}",
+                log.info("▶ Rule 위반검사 -  타입: {}, 연산자: {}, 기준값: {}, 센서값: {} → 결과: {}",
                         ruleType,
                         operator.getSymbol(),
                         String.format("%.2f", targetvalue),

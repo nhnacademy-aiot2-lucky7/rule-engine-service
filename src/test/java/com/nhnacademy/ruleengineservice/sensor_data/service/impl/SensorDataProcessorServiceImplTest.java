@@ -72,7 +72,8 @@ class SensorDataProcessorServiceImplTest {
         SensorRule sensorRule1 = SensorRule.builder()
                 .gatewayId("gateway1")
                 .sensorId("sensor1")
-                .dataType("temperature")
+                .dataTypeEnName("temperature")
+                .dataTypeKrName("온도")
                 .ruleType(RuleType.MIN)
                 .operator(Operator.LESS_THAN)
                 .value(50.0)
@@ -92,7 +93,7 @@ class SensorDataProcessorServiceImplTest {
         Assertions.assertAll(
                 ()->{
                     assertEquals(EventLevel.WARN, sentMessage.getEventLevel());
-                    assertEquals("센서 sensor1의 MIN 룰 위반: 데이터값 40.00은(는) 50.00미만이므로 알림전송.", sentMessage.getEventDetails());
+                    assertEquals("센서 [sensor1]의 [온도]데이터에 대한 MIN 룰 위반: 데이터값 40.00은(는) 50.00미만이므로 알림전송.", sentMessage.getEventDetails());
                     assertEquals("sensor1", sentMessage.getSourceId());
                     assertEquals("센서", sentMessage.getSourceType());
                     assertEquals("department1", sentMessage.getDepartmentId());

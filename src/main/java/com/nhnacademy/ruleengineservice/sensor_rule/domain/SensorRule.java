@@ -1,18 +1,21 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.nhnacademy.ruleengineservice.enums.ActionType;
 import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 
-@Data
+@Getter
+@Setter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SensorRule {
 
     // 필수값
@@ -23,7 +26,10 @@ public class SensorRule {
     private String sensorId;
 
     @NotNull
-    private String dataType; // 예: 온도, 습도 등
+    private String dataTypeEnName; // 예: 온도, 습도 등
+
+    @NotNull
+    private String dataTypeKrName;
 
     @NotNull
     private RuleType ruleType; // 예: max, min, avg 등
@@ -39,12 +45,11 @@ public class SensorRule {
 
     private Double minValue; // 기준 값의 최소값 (선택적)
     
-    private Double maxValue; // 기준 값의 최소값 (선택적)
-
+    private Double maxValue; // 기준 값의 최대값 (선택적)
 
     // 센서 룰의 Redis 키를 생성하는 메소드
     public String getRedisKey() {
-        return String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
+        return String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataTypeEnName, ruleType);
     }
 
 }

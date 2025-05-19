@@ -55,7 +55,7 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         SensorRule existing = redisTemplate.opsForValue().get(key);
 
         if (existing == null) {
-            throw new NotFoundException(String.format(EXCEPTION_MESSAGE, sensorRule.getGatewayId(), sensorRule.getSensorId(), sensorRule.getDataType()));
+            throw new NotFoundException(String.format(EXCEPTION_MESSAGE, sensorRule.getGatewayId(), sensorRule.getSensorId(), sensorRule.getDataTypeEnName()));
         }
 
         redisTemplate.opsForValue().set(key, sensorRule);
