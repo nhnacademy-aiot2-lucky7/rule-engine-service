@@ -129,7 +129,7 @@ class SensorDataIntegrationTest {
                 .operator(Operator.OUT_OF_BOUND)
                 .action(ActionType.SEND_ALERT)
                 .value(25.00)
-                .minValue(8.00)
+                .minValue(10.00)
                 .maxValue(40.00)
                 .build();
 
@@ -356,7 +356,7 @@ class SensorDataIntegrationTest {
     }
 
     @Test
-    @DisplayName("서로 다른 센서의 데이터가 220개 들어왔을 경우 - MAX, AVG 룰 위반일 경우")
+    @DisplayName("서로 다른 센서의 데이터가 220개 들어왔을 경우 - 모든 룰 위반일 경우")
     void whenEachOtherTwoHundredDataViolatesMaxAndAvgRules_thenSendTwoEvents() throws Exception {
         List<DataDTO> testDataList = new ArrayList<>();
         for (int i=0; i <= 9; i++) {
@@ -371,7 +371,7 @@ class SensorDataIntegrationTest {
                     gatewayId,
                     sensorId2,
                     dataTypeEnName,
-                    41.00 + i,
+                    0.00 + i,
                     20250520L
             );
             testDataList.add(data1);
@@ -391,4 +391,14 @@ class SensorDataIntegrationTest {
 
         verify(eventProducer, times(440)).sendEvent(any());
     }
+
+    @Test
+    @DisplayName("비정상 요청에 대한 테스트")
+    void whenInvalidData_thenReturnBadRequest() throws Exception {
+        mockMvc.perform(post("/rule_engine/data")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}")) // 비어 있음
+                .andExpect(status().isBadRequest());
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.nhnacademy.ruleengineservice.common.controller;
 
+import com.nhnacademy.ruleengineservice.common.exception.BadRequestException;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,12 @@ public class SensorDataController {
     @PostMapping("/data")
     public ResponseEntity<Void> receiveSensorData(@RequestBody DataDTO dataDTO) {
         log.info("수신 데이터: [{}]", dataDTO);
+        if (dataDTO.getGatewayId() == null
+                        || dataDTO.getSensorId() == null
+                        || dataDTO.getDataType() == null
+        ) {
+            throw new BadRequestException("핸들러로부터 받은 데이터에 문제가 있습니다.");
+        }
         processorService.process(dataDTO);
         return ResponseEntity.ok().build();
     }

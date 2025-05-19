@@ -58,4 +58,14 @@ class SensorDataControllerTest {
         assertEquals(40.00, captorRequest.getValue());
         assertEquals(20250505L, captorRequest.getTimestamp());
     }
+
+    @Test
+    @DisplayName("데이터를 잘 받아오지 못한 경우")
+    void testReceiveSensorData_BadRequest() throws Exception {
+        mockMvc.perform(post("/rule_engine/data")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest()
+        );
+    }
 }
