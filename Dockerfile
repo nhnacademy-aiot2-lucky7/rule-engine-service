@@ -2,7 +2,6 @@ FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 ARG GITHUB_ACTOR
 ARG GITHUB_TOKEN
-COPY .m2/settings.xml /root/.m2/settings.xml
 COPY . .
 RUN GITHUB_ACTOR=${GITHUB_ACTOR} GITHUB_TOKEN=${GITHUB_TOKEN} ./mvnw clean install -Dmaven.test.skip=true
 
