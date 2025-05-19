@@ -11,10 +11,7 @@ import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -61,8 +58,6 @@ class SensorDataIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        redisTemplate.getConnectionFactory().getConnection().flushAll(); // Redis 초기화
-
         SensorRule minRule1 = SensorRule.builder()
                 .gatewayId(gatewayId)
                 .sensorId(sensorId1)
@@ -139,6 +134,16 @@ class SensorDataIntegrationTest {
         sensorRuleService.saveSensorRule(minRule2);
         sensorRuleService.saveSensorRule(maxRule2);
         sensorRuleService.saveSensorRule(avgRule2);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, "MIN");
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, "MAX");
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, "AVG");
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, "MIN");
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, "MAX");
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, "AVG");
     }
 
     @Test
