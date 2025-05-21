@@ -16,5 +16,5 @@ public interface SensorRuleService {
     SaveStatus saveSensorRule(SensorRule sensorRule);
     SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType);
     void updateSensorRule(SensorRule sensorRule);
-    void deleteSensorRule(String gatewayId, String sensorId, String dataType, String ruleType);
+    void deleteSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType);
 }

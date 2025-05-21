@@ -113,10 +113,9 @@ class SensorRuleServiceImplTest {
     void deleteSensorRule_shouldDeleteSuccessfully() {
         String key = sensorRule.getRedisKey();
 
-        when(redisTemplate.hasKey(key)).thenReturn(true);
         when(redisTemplate.delete(key)).thenReturn(true);
 
-        sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", "MAX");
+        sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", RuleType.MAX);
 
         verify(redisTemplate).delete(key);
     }
@@ -126,10 +125,10 @@ class SensorRuleServiceImplTest {
     void deleteSensorRule_shouldThrowException_whenDeleteFails() {
         String key = sensorRule.getRedisKey();
 
-        when(redisTemplate.hasKey(key)).thenReturn(false);
+        when(redisTemplate.delete(key)).thenReturn(false);
 
         assertThatThrownBy(() ->
-                sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", "MAX")
+                sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", RuleType.MAX)
         ).isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: gateway1, Sensor: sensor1, DataType: temperature");
     }

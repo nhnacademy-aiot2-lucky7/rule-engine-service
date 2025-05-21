@@ -138,12 +138,12 @@ class SensorDataIntegrationTest {
 
     @AfterEach
     void cleanUp() {
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, "MIN");
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, "MAX");
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, "AVG");
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, "MIN");
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, "MAX");
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, "AVG");
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, RuleType.MIN);
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, RuleType.MAX);
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, RuleType.AVG);
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, RuleType.MIN);
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, RuleType.MAX);
+        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, RuleType.AVG);
     }
 
     @Test
