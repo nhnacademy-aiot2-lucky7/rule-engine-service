@@ -38,13 +38,4 @@ public class CommonAdvice {
                 .body("Internal Server Error 발생\n" + stackTrace);
     }
 
-    @ExceptionHandler(SensorRuleCreationException.class)
-    public ResponseEntity<String> handleSensorRuleCreationException(SensorRuleCreationException e) {
-        log.warn("SensorRule 필수값 누락 예외 발생: {}", e.getMessage());
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("SensorRule 생성 실패: " + e.getMessage());
-    }
-
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.nhnacademy.ruleengineservice.common.exception.InvalidRedisPasswordException;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,9 +46,15 @@ public class RedisConfig {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(host);
         config.setPort(port);
-        config.setPassword(RedisPassword.of(password));
-        config.setDatabase(database);
 
+        if (password == null || password.isBlank()) {
+            log.warn("Redis password is blank. Connecting without authentication.");
+            throw new InvalidRedisPasswordException("Redis 비밀번호가 비어 있습니다.");
+        } else {
+            config.setPassword(RedisPassword.of(password));
+        }
+
+        config.setDatabase(database);
         return new LettuceConnectionFactory(config);
     }
 
