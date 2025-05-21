@@ -1,5 +1,8 @@
 package com.nhnacademy.ruleengineservice.common.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.nhnacademy.ruleengineservice.common.exception.InvalidRedisPasswordException;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import lombok.RequiredArgsConstructor;
@@ -30,39 +33,56 @@ public class RedisConfig {
     @Value("${redis.database}")
     private int database;
 
+    /**
+     * Redis 연결 팩토리 설정
+     */
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(host);
         config.setPort(port);
 
-        if (password == null) {
-            throw new InvalidRedisPasswordException("Redis 비밀번호가 비어 있습니다.");
-        }
-
-        if (!password.isBlank()) {
+        if (password != null && !password.isBlank()) {
             config.setPassword(RedisPassword.of(password));
         } else {
-            log.warn("Redis password is blank. Connecting without authentication.");
+            log.warn("Redis 비밀번호가 설정되지 않았습니다. 인증 없이 연결합니다.");
         }
 
         config.setDatabase(database);
+
         return new LettuceConnectionFactory(config);
     }
 
+
+    /**
+     * 커스터마이즈된 ObjectMapper 반환
+     */
     @Bean
-    public RedisTemplate<String, SensorRule> redisTemplate(LettuceConnectionFactory connectionFactory) {
+    public ObjectMapper redisObjectMapper() {
+        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("com.nhnacademy") // 보안상 지정된 패키지만 허용
+                .build();
+
+        return new ObjectMapper()
+                .activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+    }
+
+    /**
+     * RedisTemplate 설정
+     */
+    @Bean
+    public RedisTemplate<String, SensorRule> redisTemplate(
+            LettuceConnectionFactory connectionFactory,
+            ObjectMapper redisObjectMapper
+    ) {
         RedisTemplate<String, SensorRule> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // Key 직렬화기
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        template.setKeySerializer(stringRedisSerializer);
-        template.setHashKeySerializer(stringRedisSerializer);
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
 
-        // Value 직렬화기 (Jackson 3.x 호환)
-        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
-
+        template.setKeySerializer(keySerializer);
+        template.setHashKeySerializer(keySerializer);
         template.setValueSerializer(valueSerializer);
         template.setHashValueSerializer(valueSerializer);
 

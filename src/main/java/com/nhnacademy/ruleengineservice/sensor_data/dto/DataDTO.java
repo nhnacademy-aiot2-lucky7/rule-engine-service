@@ -1,5 +1,6 @@
 package com.nhnacademy.ruleengineservice.sensor_data.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Value;
@@ -13,7 +14,6 @@ import lombok.Value;
  * </p>
  */
 @Value
-@AllArgsConstructor
 public class DataDTO {
 
     /**
@@ -45,4 +45,19 @@ public class DataDTO {
      */
     @JsonProperty("timestamp")
     Long timestamp;
+
+    @JsonCreator
+    public DataDTO(
+            @JsonProperty("gateway_id") String gatewayId,
+            @JsonProperty("sensor_id") String sensorId,
+            @JsonProperty("type") String dataType,
+            @JsonProperty("value") Double value,
+            @JsonProperty("timestamp") Long timestamp
+    ) {
+        this.gatewayId = gatewayId;
+        this.sensorId = sensorId;
+        this.dataType = dataType;
+        this.value = value;
+        this.timestamp = timestamp;
+    }
 }
