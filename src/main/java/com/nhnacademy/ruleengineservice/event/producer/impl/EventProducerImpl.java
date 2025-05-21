@@ -1,8 +1,11 @@
 package com.nhnacademy.ruleengineservice.event.producer.impl;
 
+import com.nhnacademy.ruleengineservice.common.exception.InvalidMessagingConfigurationException;
+import com.nhnacademy.ruleengineservice.common.exception.RabbitMessageSendFailedException;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
 import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,14 @@ public class EventProducerImpl implements EventProducer {
 
     @Override
     public void sendEvent(ViolatedRuleEventDTO dto) {
-        rabbitTemplate.convertAndSend(exchange, routingKey, dto);
+        if (exchange == null || routingKey == null) {
+            throw new InvalidMessagingConfigurationException("Exchange나 RoutingKey가 설정되지 않았습니다.");
+        }
+
+        try {
+            rabbitTemplate.convertAndSend(exchange, routingKey, dto);
+        } catch (AmqpException e) {
+            throw new RabbitMessageSendFailedException();
+        }
     }
 }
