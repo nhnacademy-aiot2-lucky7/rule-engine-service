@@ -1,6 +1,5 @@
 package com.nhnacademy.ruleengineservice.event.producer.impl;
 
-import com.nhnacademy.ruleengineservice.common.exception.InvalidMessagingConfigurationException;
 import com.nhnacademy.ruleengineservice.common.exception.RabbitMessageSendFailedException;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
 import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
@@ -24,10 +23,6 @@ public class EventProducerImpl implements EventProducer {
 
     @Override
     public void sendEvent(ViolatedRuleEventDTO dto) {
-        if (exchange == null || routingKey == null) {
-            throw new InvalidMessagingConfigurationException("Exchange나 RoutingKey가 설정되지 않았습니다.");
-        }
-
         try {
             rabbitTemplate.convertAndSend(exchange, routingKey, dto);
         } catch (AmqpException e) {

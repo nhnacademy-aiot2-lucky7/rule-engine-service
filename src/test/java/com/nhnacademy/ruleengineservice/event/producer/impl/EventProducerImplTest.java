@@ -2,6 +2,7 @@ package com.nhnacademy.ruleengineservice.event.producer.impl;
 
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

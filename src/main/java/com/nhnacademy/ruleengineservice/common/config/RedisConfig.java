@@ -47,11 +47,14 @@ public class RedisConfig {
         config.setHostName(host);
         config.setPort(port);
 
-        if (password == null || password.isBlank()) {
-            log.warn("Redis password is blank. Connecting without authentication.");
+        if (password == null) {
             throw new InvalidRedisPasswordException("Redis 비밀번호가 비어 있습니다.");
-        } else {
+        }
+
+        if (!password.isBlank()) {
             config.setPassword(RedisPassword.of(password));
+        } else {
+            log.warn("Redis password is blank. Connecting without authentication.");
         }
 
         config.setDatabase(database);
