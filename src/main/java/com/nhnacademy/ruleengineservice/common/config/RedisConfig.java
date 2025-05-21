@@ -91,33 +91,4 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
-
-    @Bean
-    public RedisTemplate<String, SensorRule> sensorRuleRedisTemplate(LettuceConnectionFactory connectionFactory) {
-        RedisTemplate<String, SensorRule> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-
-        // Key는 String
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-
-        // Value는 SensorRule
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-
-        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-                .allowIfSubType("com.nhnacademy.ruleengineservice") // SensorRule 패키지 포함
-                .build();
-
-        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
-
-        Jackson2JsonRedisSerializer<SensorRule> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, SensorRule.class);
-
-        template.setValueSerializer(serializer);
-        template.setHashValueSerializer(serializer);
-
-        template.afterPropertiesSet();
-        return template;
-    }
-
 }
