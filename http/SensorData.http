@@ -9,15 +9,3 @@ Content-Type: application/json
   "value": 41.00,
   "timestamp": 1747879909160
 }
-
-###
-POST http://localhost:10245/rule_engine/data
-Content-Type: application/json
-
-{
-  "gateway_id": "test",
-  "type": "temperature",
-  "timestamp": 1747879909160,
-  "value": 41.00,
-  "sensor_id": "test"
-}

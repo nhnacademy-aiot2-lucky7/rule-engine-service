@@ -61,27 +61,27 @@ public class RedisConfig {
         RedisTemplate<String, SensorRule> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        // 문자열 Key 직렬화
+        // Key와 HashKey는 문자열 직렬화 사용
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
         template.setKeySerializer(stringRedisSerializer);
         template.setHashKeySerializer(stringRedisSerializer);
 
-        // ObjectMapper 설정 (안전하게 타입 제한)
+        // ObjectMapper 세팅
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
 
         BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-                .allowIfSubType("com.nhnacademy.ruleengineservice") // 안전하게 패키지 제한
+                .allowIfSubType("com.nhnacademy.ruleengineservice")
                 .build();
 
         objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
 
-        // 직렬화기 생성 시 ObjectMapper 전달
-        Jackson2JsonRedisSerializer<SensorRule> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, SensorRule.class);
+        Jackson2JsonRedisSerializer<SensorRule> sensorRuleSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, SensorRule.class);
 
-        // Value 직렬화기 설정
-        template.setValueSerializer(serializer);
-        template.setHashValueSerializer(serializer);
+        // Value와 HashValue 직렬화기에 설정
+        template.setValueSerializer(sensorRuleSerializer);
+        template.setHashValueSerializer(sensorRuleSerializer);
 
         template.afterPropertiesSet();
         return template;
