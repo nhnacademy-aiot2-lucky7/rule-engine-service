@@ -37,19 +37,27 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
      */
     @Override
     public void process(DataDTO dataDTO) {
-        List<SensorRule> violatedRules = violationService.getViolatedRules(dataDTO);
+        try {
+            List<SensorRule> violatedRules = violationService.getViolatedRules(dataDTO);
 
-        if (!violatedRules.isEmpty()) {
-            // 위반된 룰들의 이름과 상세 정보 생성
-            for (SensorRule violatedRule : violatedRules) {
-                String eventDetail = (violatedRule.getRuleType().equals(RuleType.AVG))
-                        ? createAVGEventDetail(dataDTO, violatedRule) : createEventDetail(dataDTO, violatedRule);
-                ViolatedRuleEventDTO dto = toEventDTO(dataDTO, eventDetail);
-                eventProducer.sendEvent(dto);
+            if (!violatedRules.isEmpty()) {
+                for (SensorRule violatedRule : violatedRules) {
+                    String eventDetail = (violatedRule.getRuleType().equals(RuleType.AVG))
+                            ? createAVGEventDetail(dataDTO, violatedRule)
+                            : createEventDetail(dataDTO, violatedRule);
+
+                    ViolatedRuleEventDTO dto = toEventDTO(dataDTO, eventDetail);
+                    eventProducer.sendEvent(dto);
+                }
+
                 log.info("센서 데이터가 위반한 룰들: {}", violatedRules);
+            } else {
+                log.info("센서 데이터가 모든 룰을 통과했습니다!");
             }
-        } else {
-            log.info("센서 데이터가 모든 룰을 통과했습니다!");
+
+        } catch (Exception e) {
+            log.warn("룰 처리 중 예외 발생: {}", e.getMessage(), e);
+            // 예외 삼키고 아무것도 하지 않음
         }
     }
 
