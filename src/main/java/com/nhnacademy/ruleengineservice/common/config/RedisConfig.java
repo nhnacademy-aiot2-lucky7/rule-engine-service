@@ -1,9 +1,9 @@
 package com.nhnacademy.ruleengineservice.common.config;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.nhnacademy.ruleengineservice.common.exception.InvalidRedisPasswordException;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Slf4j
@@ -53,38 +53,35 @@ public class RedisConfig {
         return new LettuceConnectionFactory(config);
     }
 
-
-    /**
-     * 커스터마이즈된 ObjectMapper 반환
-     */
-    @Bean
-    public ObjectMapper redisObjectMapper() {
-        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-                .allowIfSubType("com.nhnacademy") // 보안상 지정된 패키지만 허용
-                .build();
-
-        return new ObjectMapper()
-                .activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
-
     /**
      * RedisTemplate 설정
      */
     @Bean
-    public RedisTemplate<String, SensorRule> redisTemplate(
-            LettuceConnectionFactory connectionFactory,
-            ObjectMapper redisObjectMapper
-    ) {
+    public RedisTemplate<String, SensorRule> redisTemplate(LettuceConnectionFactory connectionFactory) {
         RedisTemplate<String, SensorRule> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        StringRedisSerializer keySerializer = new StringRedisSerializer();
-        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer(redisObjectMapper);
+        // 문자열 Key 직렬화
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        template.setKeySerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
 
-        template.setKeySerializer(keySerializer);
-        template.setHashKeySerializer(keySerializer);
-        template.setValueSerializer(valueSerializer);
-        template.setHashValueSerializer(valueSerializer);
+        // ObjectMapper 설정 (안전하게 타입 제한)
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+
+        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("com.nhnacademy.ruleengineservice") // 안전하게 패키지 제한
+                .build();
+
+        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
+
+        // 직렬화기 생성 시 ObjectMapper 전달
+        Jackson2JsonRedisSerializer<SensorRule> serializer = new Jackson2JsonRedisSerializer<>(objectMapper, SensorRule.class);
+
+        // Value 직렬화기 설정
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
 
         template.afterPropertiesSet();
         return template;
