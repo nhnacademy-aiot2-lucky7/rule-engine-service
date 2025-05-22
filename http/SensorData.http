@@ -1,13 +1,23 @@
 ### 센서에서 들어오는 데이터 확인
-POST http://localhost:8080/ruleEngine/data
+POST http://localhost:10245/rule_engine/data
 Content-Type: application/json
 
 {
-  "data": {
-    "sensorId": "sensor1",
-    "datatype": "temperature",
-    "desc": "온도",
-    "place": "하이브",
-    "value": 30
-  }
+  "gateway_id": "gateway-001",
+  "sensor_id": "sensor-001",
+  "type": "temperature",
+  "value": 41.00,
+  "timestamp": 1747879909160
+}
+
+###
+POST http://localhost:10245/rule_engine/data
+Content-Type: application/json
+
+{
+  "gateway_id": "test",
+  "type": "temperature",
+  "timestamp": 1747879909160,
+  "value": 41.00,
+  "sensor_id": "test"
 }
