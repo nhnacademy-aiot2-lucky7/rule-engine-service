@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "gateway-service", url = "${gateway.service.url}")
 public interface GatewayFeignClient {
 
-    @GetMapping("/gateway-service/gateway/{gatewayId}/department")
-    String getDepartmentIdByGatewayId(@PathVariable("gatewayId") String gatewayId);
+    @GetMapping("/gateways/{gateway-id}/department-id")
+    String getDepartmentIdByGatewayId(@PathVariable("gateway-id") String gatewayId);
 
-    @GetMapping("/gateway-service/gateway/{gatewayId}/activate")
-    void activateGateway(@PathVariable("gatewayId") String gatewayId);
+    @GetMapping("/gateway-service/gateway/{gateway-id}/activate")
+    void activateGateway(@PathVariable("gateway-id") String gatewayId);
 }

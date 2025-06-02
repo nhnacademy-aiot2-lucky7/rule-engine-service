@@ -72,7 +72,7 @@ class ThresholdIntegrationTest {
 
         when(sensorAdapter.getAnalysisResult(gatewayId)).thenReturn(List.of(analysis));
         when(sensorRuleService.saveSensorRule(any(SensorRule.class))).thenReturn(SaveStatus.NEW);
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("서버실");
+        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
 
         // When & Then
         mockMvc.perform(post("/rule_engine/webhook/threshold_complete")
@@ -92,7 +92,7 @@ class ThresholdIntegrationTest {
 
         ViolatedRuleEventDTO sentEvent = eventCaptor.getValue();
         assertThat(sentEvent.getEventDetails()).contains("센서 [sensor-001]의 [온도] 데이터에 대한 룰이 생성되었습니다.");
-        assertThat(sentEvent.getDepartmentId()).isEqualTo("서버실");
+        assertThat(sentEvent.getDepartmentId()).isEqualTo("1");
         assertThat(sentEvent.getSourceId()).isEqualTo("sensor-001");
     }
 }
