@@ -50,7 +50,7 @@ class SensorRuleGenerateServiceImplTest {
         analysisDTOList = new ArrayList<>();
 
         ThresholdAnalysisDTO analysisDTO1 = new ThresholdAnalysisDTO(
-                "gateway1",
+                1L,
                 "sensor1",
                 "temperature",
                 "온도",
@@ -61,7 +61,7 @@ class SensorRuleGenerateServiceImplTest {
                 34.00
         );
         ThresholdAnalysisDTO analysisDTO2 = new ThresholdAnalysisDTO(
-                "gateway1",
+                1L,
                 "sensor1",
                 "humidity",
                 "습도",
@@ -79,7 +79,7 @@ class SensorRuleGenerateServiceImplTest {
     void allRulesGeneratedAndEventPublished() {
 
         when(sensorRuleService.saveSensorRule(any(SensorRule.class))).thenReturn(SaveStatus.NEW);
-        when(gatewayAdapter.getDepartmentIdByGatewayId(anyString())).thenReturn("부서-01");
+        when(gatewayAdapter.getDepartmentIdByGatewayId(anyLong())).thenReturn("부서-01");
 
         sensorRuleGenerateService.generateRules(analysisDTOList);
 
@@ -92,7 +92,7 @@ class SensorRuleGenerateServiceImplTest {
     void rulesGeneratedAndEventPublishedOnUpdated() {
 
         when(sensorRuleService.saveSensorRule(any(SensorRule.class))).thenReturn(SaveStatus.UPDATED);
-        when(gatewayAdapter.getDepartmentIdByGatewayId(anyString())).thenReturn("부서-01");
+        when(gatewayAdapter.getDepartmentIdByGatewayId(anyLong())).thenReturn("부서-01");
 
         sensorRuleGenerateService.generateRules(analysisDTOList);
 
@@ -104,7 +104,7 @@ class SensorRuleGenerateServiceImplTest {
     @DisplayName("모든 룰 생성 확인 - 자세한 값 확인")
     void checkEventDetails() {
 
-        when(gatewayAdapter.getDepartmentIdByGatewayId(anyString())).thenReturn(anyString());
+        when(gatewayAdapter.getDepartmentIdByGatewayId(anyLong())).thenReturn(anyString());
 
         sensorRuleGenerateService.generateRules(analysisDTOList);
 
@@ -116,7 +116,7 @@ class SensorRuleGenerateServiceImplTest {
         Assertions.assertAll(
                 () -> {
                     assertTrue(rules.stream().anyMatch(rule ->
-                            rule.getGatewayId().equals("gateway1")
+                            rule.getGatewayId().equals(1L)
                                     && rule.getSensorId().equals("sensor1")
                                     && rule.getDataTypeEnName().equals("temperature")
                                     && rule.getDataTypeKrName().equals("온도")
@@ -130,7 +130,7 @@ class SensorRuleGenerateServiceImplTest {
                 },
                 () -> {
                     assertTrue(rules.stream().anyMatch(rule ->
-                            rule.getGatewayId().equals("gateway1")
+                            rule.getGatewayId().equals(1L)
                                     && rule.getSensorId().equals("sensor1")
                                     && rule.getDataTypeEnName().equals("temperature")
                                     && rule.getDataTypeKrName().equals("온도")
@@ -144,7 +144,7 @@ class SensorRuleGenerateServiceImplTest {
                 },
                 () -> {
                     assertTrue(rules.stream().anyMatch(rule ->
-                            rule.getGatewayId().equals("gateway1")
+                            rule.getGatewayId().equals(1L)
                                     && rule.getSensorId().equals("sensor1")
                                     && rule.getDataTypeEnName().equals("temperature")
                                     && rule.getDataTypeKrName().equals("온도")
@@ -158,7 +158,7 @@ class SensorRuleGenerateServiceImplTest {
                 },
                 () -> {
                     assertTrue(rules.stream().anyMatch(rule ->
-                            rule.getGatewayId().equals("gateway1")
+                            rule.getGatewayId().equals(1L)
                                     && rule.getSensorId().equals("sensor1")
                                     && rule.getDataTypeEnName().equals("humidity")
                                     && rule.getDataTypeKrName().equals("습도")
@@ -172,7 +172,7 @@ class SensorRuleGenerateServiceImplTest {
                 },
                 () -> {
                     assertTrue(rules.stream().anyMatch(rule ->
-                            rule.getGatewayId().equals("gateway1")
+                            rule.getGatewayId().equals(1L)
                                     && rule.getSensorId().equals("sensor1")
                                     && rule.getDataTypeEnName().equals("humidity")
                                     && rule.getDataTypeKrName().equals("습도")
@@ -186,7 +186,7 @@ class SensorRuleGenerateServiceImplTest {
                 },
                 () -> {
                     assertTrue(rules.stream().anyMatch(rule ->
-                            rule.getGatewayId().equals("gateway1")
+                            rule.getGatewayId().equals(1L)
                                     && rule.getSensorId().equals("sensor1")
                                     && rule.getDataTypeEnName().equals("humidity")
                                     && rule.getDataTypeKrName().equals("습도")

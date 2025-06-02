@@ -11,7 +11,7 @@ import lombok.Setter;
 public class ThresholdRequest {
 
     @JsonProperty("gateway_id")
-    private String gatewayId;
+    private Long gatewayId;
 
     @JsonProperty("status")
     private String status;

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface GatewayFeignClient {
 
     @GetMapping("/gateways/{gateway-id}/department-id")
-    String getDepartmentIdByGatewayId(@PathVariable("gateway-id") String gatewayId);
+    String getDepartmentIdByGatewayId(@PathVariable("gateway-id") Long gatewayId);
 
     @GetMapping("/gateway-service/gateway/{gateway-id}/activate")
-    void activateGateway(@PathVariable("gateway-id") String gatewayId);
+    void activateGateway(@PathVariable("gateway-id") Long gatewayId);
 }

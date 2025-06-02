@@ -16,7 +16,7 @@ public class GatewayAdapterImpl implements GatewayAdapter {
     }
 
     @Override
-    public String getDepartmentIdByGatewayId(String gatewayId) {
+    public String getDepartmentIdByGatewayId(Long gatewayId) {
         try {
             return gatewayFeignClient.getDepartmentIdByGatewayId(gatewayId);
         } catch (Exception e) {
@@ -26,7 +26,7 @@ public class GatewayAdapterImpl implements GatewayAdapter {
     }
 
     @Override
-    public void activateGateway(String gatewayId) {
+    public void activateGateway(Long gatewayId) {
         try {
             gatewayFeignClient.activateGateway(gatewayId);
             log.info("게이트웨이 [{}] 활성화 완료", gatewayId);

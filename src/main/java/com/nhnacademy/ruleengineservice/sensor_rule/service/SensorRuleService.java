@@ -14,7 +14,7 @@ import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 public interface SensorRuleService {
 
     SaveStatus saveSensorRule(SensorRule sensorRule);
-    SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType);
+    SensorRule getSensorRule(Long gatewayId, String sensorId, String dataType, RuleType ruleType);
     void updateSensorRule(SensorRule sensorRule);
-    void deleteSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType);
+    void deleteSensorRule(Long gatewayId, String sensorId, String dataType, RuleType ruleType);
 }

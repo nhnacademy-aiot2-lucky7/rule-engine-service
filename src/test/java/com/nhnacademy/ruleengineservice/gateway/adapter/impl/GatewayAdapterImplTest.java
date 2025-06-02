@@ -25,7 +25,7 @@ class GatewayAdapterImplTest {
     @Test
     @DisplayName("gatewayId로 departmentId 가져오기 - 성공")
     void getDepartmentIdByGatewayId_success() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
         String expectedDeptId = "department1";
 
         when(gatewayFeignClient.getDepartmentIdByGatewayId(gatewayId)).thenReturn(expectedDeptId);
@@ -39,7 +39,7 @@ class GatewayAdapterImplTest {
     @Test
     @DisplayName("gatewayId로 departmentId 가져오기 - 실패")
     void getDepartmentIdByGatewayId_fail() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
 
         when(gatewayFeignClient.getDepartmentIdByGatewayId(gatewayId)).thenThrow(new RuntimeException("Feign error"));
 
@@ -52,7 +52,7 @@ class GatewayAdapterImplTest {
     @Test
     @DisplayName("gatewayId로 게이트웨이 활성화 성공")
     void activateGateway_success() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
 
         gatewayAdapter.activateGateway(gatewayId);
 
@@ -62,7 +62,7 @@ class GatewayAdapterImplTest {
     @Test
     @DisplayName("gatewayId로 게이트웨이 활성화 실패")
     void activateGateway_fail() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
 
         doThrow(new RuntimeException("Feign error")).when(gatewayFeignClient).activateGateway(gatewayId);
 

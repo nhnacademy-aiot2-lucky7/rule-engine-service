@@ -38,7 +38,7 @@ public class SensorRuleServiceImpl implements SensorRuleService {
     }
 
     @Override
-    public SensorRule getSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType) {
+    public SensorRule getSensorRule(Long gatewayId, String sensorId, String dataType, RuleType ruleType) {
         String key = generateKey(gatewayId, sensorId, dataType, ruleType);
         Boolean exists = redisTemplate.hasKey(key);
 
@@ -63,7 +63,7 @@ public class SensorRuleServiceImpl implements SensorRuleService {
     }
 
     @Override
-    public void deleteSensorRule(String gatewayId, String sensorId, String dataType, RuleType ruleType) {
+    public void deleteSensorRule(Long gatewayId, String sensorId, String dataType, RuleType ruleType) {
         String key = generateKey(gatewayId, sensorId, dataType, ruleType);
         Boolean deleted = redisTemplate.delete(key);
 
@@ -74,7 +74,7 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         log.info("Deleted sensor rule: {}", key);
     }
 
-    private static String generateKey(String gatewayId, String sensorId, String dataType, RuleType ruleType) {
+    private static String generateKey(Long gatewayId, String sensorId, String dataType, RuleType ruleType) {
         return String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
     }
 }

@@ -20,7 +20,7 @@ public class SensorRule {
 
     // 필수값
     @NotNull
-    private String gatewayId;
+    private Long gatewayId;
 
     @NotNull
     private String sensorId;

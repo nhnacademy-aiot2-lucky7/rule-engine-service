@@ -37,7 +37,7 @@ class SensorRuleViolationServiceImplTest {
     @BeforeEach
     void setUp() {
         minRule = SensorRule.builder()
-                .gatewayId("gateway1")
+                .gatewayId(1L)
                 .sensorId("sensor1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
@@ -48,7 +48,7 @@ class SensorRuleViolationServiceImplTest {
                 .build();
 
         maxRule = SensorRule.builder()
-                .gatewayId("gateway1")
+                .gatewayId(1L)
                 .sensorId("sensor1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
@@ -59,7 +59,7 @@ class SensorRuleViolationServiceImplTest {
                 .build();
 
         avgRule = SensorRule.builder()
-                .gatewayId("gateway1")
+                .gatewayId(1L)
                 .sensorId("sensor1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
@@ -75,7 +75,7 @@ class SensorRuleViolationServiceImplTest {
     @Test
     @DisplayName("모든 룰 통과 확인")
     void allRulesPassedSuccessfully() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
         String sensorId = "sensor1";
         String dataType = "temperature";
         double sensorValue = 28.0; // 모든 룰을 만족하는 값
@@ -95,14 +95,14 @@ class SensorRuleViolationServiceImplTest {
         List<SensorRule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
         assertThat(violatedRules).isEmpty();
-        verify(sensorRuleService, times(3)).getSensorRule(anyString(), anyString(), anyString(), any());
+        verify(sensorRuleService, times(3)).getSensorRule(anyLong(), anyString(), anyString(), any());
     }
 
 
     @Test
     @DisplayName("MAX 룰 위반 확인")
     void allRulesPassCheck() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
         String sensorId = "sensor1";
         String dataType = "temperature";
         double sensorValue = 33.0;
@@ -122,14 +122,14 @@ class SensorRuleViolationServiceImplTest {
         List<SensorRule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
         assertThat(violatedRules).containsExactlyInAnyOrder(maxRule, avgRule);
-        verify(sensorRuleService, times(3)).getSensorRule(anyString(), anyString(), anyString(), any());
+        verify(sensorRuleService, times(3)).getSensorRule(anyLong(), anyString(), anyString(), any());
     }
 
     @Test
     @DisplayName("룰이 없을 경우 룰 위반도 없음")
     void noSensorRules() {
         DataDTO dataDTO = new DataDTO(
-                "gateway1",
+                1L,
                 "sensor1",
                 "temperature",
                 35.0,
@@ -137,7 +137,7 @@ class SensorRuleViolationServiceImplTest {
         );
 
         // mock: getSensorRule은 null 반환
-        when(sensorRuleService.getSensorRule(anyString(), anyString(), anyString(), any())).thenReturn(null);
+        when(sensorRuleService.getSensorRule(anyLong(), anyString(), anyString(), any())).thenReturn(null);
 
         // when
         List<SensorRule> result = sensorRuleViolationService.getViolatedRules(dataDTO);

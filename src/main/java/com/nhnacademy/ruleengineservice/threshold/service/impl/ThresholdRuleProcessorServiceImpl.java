@@ -24,7 +24,7 @@ public class ThresholdRuleProcessorServiceImpl implements ThresholdRuleProcessor
 
     @Override
     public void generateRulesFromAnalysis(ThresholdRequest request) {
-        String gatewayId = request.getGatewayId();
+        Long gatewayId = request.getGatewayId();
         List<ThresholdAnalysisDTO> analysisDTOList = sensorAdapter.getAnalysisResult(gatewayId);
 
         if (analysisDTOList == null || analysisDTOList.isEmpty()) {

@@ -36,7 +36,7 @@ class SensorRuleServiceImplTest {
     @BeforeEach
     void setUp() {
         sensorRule = SensorRule.builder()
-                .gatewayId("gateway1")
+                .gatewayId(1L)
                 .sensorId("sensor1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
@@ -66,7 +66,7 @@ class SensorRuleServiceImplTest {
         when(valueOperations.get(key)).thenReturn(sensorRule);
 
         SensorRule result = sensorRuleService.getSensorRule(
-                "gateway1", "sensor1", "temperature", RuleType.MAX
+                1L, "sensor1", "temperature", RuleType.MAX
         );
 
         Assertions.assertEquals(sensorRule, result);
@@ -80,7 +80,7 @@ class SensorRuleServiceImplTest {
         when(redisTemplate.hasKey(key)).thenReturn(null);
 
         assertThatThrownBy(() ->
-                sensorRuleService.getSensorRule("gateway1", "sensor1", "temperature", RuleType.MAX)
+                sensorRuleService.getSensorRule(1L, "sensor1", "temperature", RuleType.MAX)
         ).isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: gateway1, Sensor: sensor1, DataType: temperature");
     }
@@ -115,7 +115,7 @@ class SensorRuleServiceImplTest {
 
         when(redisTemplate.delete(key)).thenReturn(true);
 
-        sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", RuleType.MAX);
+        sensorRuleService.deleteSensorRule(1L, "sensor1", "temperature", RuleType.MAX);
 
         verify(redisTemplate).delete(key);
     }
@@ -128,7 +128,7 @@ class SensorRuleServiceImplTest {
         when(redisTemplate.delete(key)).thenReturn(false);
 
         assertThatThrownBy(() ->
-                sensorRuleService.deleteSensorRule("gateway1", "sensor1", "temperature", RuleType.MAX)
+                sensorRuleService.deleteSensorRule(1L, "sensor1", "temperature", RuleType.MAX)
         ).isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: gateway1, Sensor: sensor1, DataType: temperature");
     }

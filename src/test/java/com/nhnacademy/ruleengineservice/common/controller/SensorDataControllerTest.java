@@ -34,7 +34,7 @@ class SensorDataControllerTest {
     @DisplayName("DTO 형식대로 잘 받아왔는지 확인")
     void testReceiveSensorData() throws Exception {
         DataDTO dataDTO = new DataDTO(
-                "gateway-01",
+                1L,
                 "sensor-01",
                 "temperature",
                 40.00,

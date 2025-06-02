@@ -20,7 +20,7 @@ public class SensorAdapterImpl implements SensorAdapter {
     }
 
     @Override
-    public List<ThresholdAnalysisDTO> getAnalysisResult(String gatewayId) {
+    public List<ThresholdAnalysisDTO> getAnalysisResult(Long gatewayId) {
         try {
             return sensorFeignClient.getAnalysisResult(gatewayId);
         } catch (Exception e) {

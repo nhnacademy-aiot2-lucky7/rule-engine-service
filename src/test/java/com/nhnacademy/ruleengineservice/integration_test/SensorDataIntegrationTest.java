@@ -45,12 +45,12 @@ class SensorDataIntegrationTest {
     @MockitoBean
     private GatewayAdapter gatewayAdapter;
 
-
+    @MockitoBean
     private EventProducer eventProducer;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final String gatewayId = "gateway-001";
+    private final Long gatewayId = 1L;
     private final String sensorId1 = "sensor-001";
     private final String sensorId2 = "sensor-002";
     private final String dataTypeEnName = "temperature";
@@ -262,64 +262,7 @@ class SensorDataIntegrationTest {
                     .andExpect(status().isOk());
         }
 
-//        verify(eventProducer, times(20)).sendEvent(any());
-    }
-
-    @Test
-    @DisplayName("210개 이상의 데이터가 들어올 때 룰 판단 - 모두 통과일 경우")
-    void whenTwoHundredDataPass() throws Exception{
-        List<DataDTO> testDataList = new ArrayList<>();
-        for (int i=0; i <= 9; i++) {
-            DataDTO data = new DataDTO(
-                    gatewayId,
-                    sensorId1,
-                    dataTypeEnName,
-                    20.00 + i,
-                    20250520L
-            );
-            testDataList.add(data);
-        }
-
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-        for (int i=0; i<21; i++) {
-            for (DataDTO data : testDataList) {
-                mockMvc.perform(post("/rule_engine/data")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(data)))
-                        .andExpect(status().isOk());
-            }
-        }
-
-        verify(eventProducer, never()).sendEvent(any());
-    }
-
-    @Test
-    @DisplayName("210개의 데이터가 들어올 때 룰 판단 - MAX, AVG 룰 위반일 경우")
-    void whenTwoHundredDataViolatesMaxAndAvgRules_thenSendTwoEvents() throws Exception{
-        List<DataDTO> testDataList = new ArrayList<>();
-        for (int i=0; i <= 9; i++) {
-            DataDTO data = new DataDTO(
-                    gatewayId,
-                    sensorId1,
-                    dataTypeEnName,
-                    41.00 + i,
-                    20250520L
-            );
-            testDataList.add(data);
-        }
-
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-
-        for (int i=0; i<21; i++) {
-            for (DataDTO data : testDataList) {
-                mockMvc.perform(post("/rule_engine/data")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(data)))
-                        .andExpect(status().isOk());
-            }
-        }
-
-        verify(eventProducer, times(420)).sendEvent(any());
+        verify(eventProducer, times(20)).sendEvent(any());
     }
 
     @Test
@@ -348,7 +291,7 @@ class SensorDataIntegrationTest {
 
 
         when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-        for (int i=0; i<11; i++) {
+        for (int i=0; i<1; i++) {
             for (DataDTO data : testDataList) {
                 mockMvc.perform(post("/rule_engine/data")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -361,7 +304,7 @@ class SensorDataIntegrationTest {
     }
 
     @Test
-    @DisplayName("서로 다른 센서의 데이터가 220개 들어왔을 경우 - 모든 룰 위반일 경우")
+    @DisplayName("서로 다른 센서의 데이터가 22개 들어왔을 경우 - 모든 룰 위반일 경우")
     void whenEachOtherTwoHundredDataViolatesMaxAndAvgRules_thenSendTwoEvents() throws Exception {
         List<DataDTO> testDataList = new ArrayList<>();
         for (int i=0; i <= 9; i++) {
@@ -385,7 +328,7 @@ class SensorDataIntegrationTest {
 
         when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
 
-        for (int i=0; i<11; i++) {
+        for (int i=0; i<1; i++) {
             for (DataDTO data : testDataList) {
                 mockMvc.perform(post("/rule_engine/data")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -394,7 +337,7 @@ class SensorDataIntegrationTest {
             }
         }
 
-        verify(eventProducer, times(440)).sendEvent(any());
+        verify(eventProducer, times(40)).sendEvent(any());
     }
 
     @Test

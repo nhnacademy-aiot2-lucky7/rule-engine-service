@@ -53,7 +53,7 @@ class ThresholdIntegrationTest {
     @DisplayName("데이터 분석외 완료되었을 때 분석 데이터를 받아와 룰 생성")
     void thresholdWebhook_shouldProcessSuccessfully() throws Exception {
         // Given
-        String gatewayId = "gateway-001";
+        Long gatewayId = 1L;
         ThresholdRequest request = new ThresholdRequest();
         request.setGatewayId(gatewayId);
         request.setStatus("분석완료");

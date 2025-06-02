@@ -20,7 +20,7 @@ public class DataDTO {
      * 게이트웨이 ID
      */
     @JsonProperty("gateway_id")
-    String gatewayId;
+    Long gatewayId;
 
     /**
      * 센서 ID
@@ -48,7 +48,7 @@ public class DataDTO {
 
     @JsonCreator
     public DataDTO(
-            @JsonProperty("gateway_id") String gatewayId,
+            @JsonProperty("gateway_id") Long gatewayId,
             @JsonProperty("sensor_id") String sensorId,
             @JsonProperty("type") String dataType,
             @JsonProperty("value") Double value,

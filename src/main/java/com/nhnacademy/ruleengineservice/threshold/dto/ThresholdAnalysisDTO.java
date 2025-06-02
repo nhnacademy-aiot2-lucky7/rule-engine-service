@@ -9,7 +9,7 @@ import lombok.Value;
 public class ThresholdAnalysisDTO {
 
     @JsonProperty("gateway_id")
-    String gatewayId;
+    Long gatewayId;
 
     @JsonProperty("sensor_id")
     String sensorId;

@@ -48,7 +48,7 @@ class ThresholdRuleProcessorServiceImplTest {
         analysisDTOList = new ArrayList<>();
 
         ThresholdAnalysisDTO analysisDTO1 = new ThresholdAnalysisDTO(
-                "gateway1",
+                1L,
                 "sensor1",
                 "temperature",
                 "온도",
@@ -64,7 +64,7 @@ class ThresholdRuleProcessorServiceImplTest {
     @Test
     @DisplayName("게이트웨이 아이디로 분석된 값을 가져와 룰 생성하기")
     void testGenerateRulesFromAnalysis() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
         String status = "분석완료";
 
         ThresholdRequest request = new ThresholdRequest();
@@ -83,7 +83,7 @@ class ThresholdRuleProcessorServiceImplTest {
     @Test
     @DisplayName("해당 게이트웨이 아이디에 분석된 값이 없거나 가져오기 실패 - 예외 발생")
     void testGenerateRulesFromAnalysis_NotFound() {
-        String gatewayId = "gateway1";
+        Long gatewayId = 1L;
         String status = "분석완료";
 
         ThresholdRequest request = new ThresholdRequest();

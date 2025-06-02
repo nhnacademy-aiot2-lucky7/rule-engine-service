@@ -12,5 +12,5 @@ import java.util.List;
 public interface SensorFeignClient {
 
     @GetMapping("/sensor-service/api/v1/threshold-histories/{gateway-id}")
-    List<ThresholdAnalysisDTO> getAnalysisResult(@PathVariable("gateway-id") String gatewayId);
+    List<ThresholdAnalysisDTO> getAnalysisResult(@PathVariable("gateway-id") Long gatewayId);
 }

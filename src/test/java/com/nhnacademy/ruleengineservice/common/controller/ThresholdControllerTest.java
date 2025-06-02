@@ -33,7 +33,7 @@ class ThresholdControllerTest {
     @Test
     @DisplayName("gatewayId와 status가 올바르게 전달되는지 확인")
     void testReceiveThresholdResult() throws Exception{
-        String gatewayId = "gateway-01";
+        Long gatewayId = 1L;
         String status = "분석완료";
 
         ThresholdRequest request = new ThresholdRequest();
@@ -51,7 +51,7 @@ class ThresholdControllerTest {
         verify(processorService).generateRulesFromAnalysis(requestCaptor.capture());
 
         ThresholdRequest captorRequest = requestCaptor.getValue();
-        assertEquals("gateway-01", captorRequest.getGatewayId());
+        assertEquals(1L, captorRequest.getGatewayId());
         assertEquals("분석완료", captorRequest.getStatus());
     }
 }

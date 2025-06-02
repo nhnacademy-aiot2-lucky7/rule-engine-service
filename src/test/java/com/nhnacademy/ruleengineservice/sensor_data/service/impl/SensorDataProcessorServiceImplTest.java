@@ -48,7 +48,7 @@ class SensorDataProcessorServiceImplTest {
     @BeforeEach
     void setUp() {
         dataDTO = new DataDTO(
-                "gateway1",
+                1L,
                 "sensor1",
                 "temperature",
                 40.0,
@@ -70,7 +70,7 @@ class SensorDataProcessorServiceImplTest {
     @DisplayName("위반한 룰이 있는 경우")
     void processValidTest() {
         SensorRule sensorRule1 = SensorRule.builder()
-                .gatewayId("gateway1")
+                .gatewayId(1L)
                 .sensorId("sensor1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
@@ -81,7 +81,7 @@ class SensorDataProcessorServiceImplTest {
                 .build();
 
         when(violationChecker.getViolatedRules(any(DataDTO.class))).thenReturn(List.of(sensorRule1));
-        when(gatewayAdapter.getDepartmentIdByGatewayId(any(String.class))).thenReturn("department1");
+        when(gatewayAdapter.getDepartmentIdByGatewayId(any(Long.class))).thenReturn("department1");
 
         processorService.process(dataDTO);
 
