@@ -2,7 +2,6 @@ package com.nhnacademy.ruleengineservice.sensor_data.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Value;
 
 /**

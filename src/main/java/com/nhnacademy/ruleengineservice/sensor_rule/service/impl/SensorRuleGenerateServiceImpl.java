@@ -1,22 +1,23 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service.impl;
 
 import com.nhnacademy.ruleengineservice.common.exception.SensorRuleCreationException;
+import com.nhnacademy.ruleengineservice.dashboard.dto.RuleCreateRequest;
 import com.nhnacademy.ruleengineservice.enums.*;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
 import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
-import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.RuleGenerationStrategy;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleGenerateService;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
-import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
-import jakarta.annotation.PostConstruct;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -28,7 +29,6 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
     private static final String SOURCE_TYPE = "센서";
 
     private final SensorRuleService sensorRuleService;
-    private final GatewayAdapter gatewayAdapter;
     private final EventProducer eventProducer;
 
     /**
@@ -36,79 +36,47 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
      */
     private final Map<RuleType, RuleGenerationStrategy> ruleGenerators = Map.of(
             RuleType.MIN, dto -> {
-                if (dto.getThresholdMin() != null) {
-                    try {
-                        return SensorRule.builder()
-                                .gatewayId(dto.getGatewayId())
-                                .sensorId(dto.getSensorId())
-                                .dataTypeEnName(dto.getDataTypeEnName())
-                                .dataTypeKrName(dto.getDataTypeKrName())
-                                .ruleType(RuleType.MIN)
-                                .operator(Operator.LESS_THAN)
-                                .value(dto.getThresholdMin())
-                                .action(ActionType.SEND_ALERT)
-                                .build();
-                    } catch (NullPointerException e) {
-                        throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
-                    }
-                }
-                return null;
+                if (dto.getThresholdMin() == null) return null;
+
+                return SensorRule.builder()
+                        .gatewayId(dto.getGatewayId())
+                        .sensorId(dto.getSensorId())
+                        .departmentId(dto.getDepartmentId())
+                        .dataTypeEnName(dto.getDataTypeEnName())
+                        .dataTypeKrName(dto.getDataTypeKrName())
+                        .ruleType(RuleType.MIN)
+                        .operator(Operator.LESS_THAN)
+                        .value(dto.getThresholdMin())
+                        .action(ActionType.SEND_ALERT)
+                        .build();
             },
+
             RuleType.MAX, dto -> {
-                if (dto.getThresholdMax() != null) {
-                    try {
-                        return SensorRule.builder()
-                                .gatewayId(dto.getGatewayId())
-                                .sensorId(dto.getSensorId())
-                                .dataTypeEnName(dto.getDataTypeEnName())
-                                .dataTypeKrName(dto.getDataTypeKrName())
-                                .ruleType(RuleType.MAX)
-                                .operator(Operator.GREATER_THAN)
-                                .value(dto.getThresholdMax())
-                                .action(ActionType.SEND_ALERT)
-                                .build();
-                    } catch (NullPointerException e) {
-                        throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
-                    }
-                }
-                return null;
-            },
-            RuleType.AVG, dto -> {
-                if (dto.getThresholdAvgMin() != null && dto.getThresholdAvgMax() != null) {
-                    try {
-                        return SensorRule.builder()
-                                .gatewayId(dto.getGatewayId())
-                                .sensorId(dto.getSensorId())
-                                .dataTypeEnName(dto.getDataTypeEnName())
-                                .dataTypeKrName(dto.getDataTypeKrName())
-                                .ruleType(RuleType.AVG)
-                                .operator(Operator.OUT_OF_BOUND)
-                                .value(dto.getThresholdAvg())
-                                .minValue(dto.getThresholdAvgMin())
-                                .maxValue(dto.getThresholdAvgMax())
-                                .action(ActionType.SEND_ALERT)
-                                .build();
-                    } catch (NullPointerException e) {
-                        throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
-                    }
-                }
-                return null;
+                if (dto.getThresholdMax() == null) return null;
+
+                return SensorRule.builder()
+                        .gatewayId(dto.getGatewayId())
+                        .sensorId(dto.getSensorId())
+                        .departmentId(dto.getDepartmentId())
+                        .dataTypeEnName(dto.getDataTypeEnName())
+                        .dataTypeKrName(dto.getDataTypeKrName())
+                        .ruleType(RuleType.MAX)
+                        .operator(Operator.GREATER_THAN)
+                        .value(dto.getThresholdMax())
+                        .action(ActionType.SEND_ALERT)
+                        .build();
             }
     );
 
     @Override
-    public void generateRules(List<ThresholdAnalysisDTO> analysisDTOList) {
-        for (ThresholdAnalysisDTO analysisDTO : analysisDTOList) {
-            generateRulesForOneSensor(analysisDTO);
-        }
-    }
+    public void generateRules(RuleCreateRequest createRequest) {
+        validateRequiredFields(createRequest);
 
-    private void generateRulesForOneSensor(ThresholdAnalysisDTO analysisDTO) {
         List<SensorRule> generatedRules = new ArrayList<>();
         boolean anyUpdated = false;
 
         for (RuleGenerationStrategy strategy : ruleGenerators.values()) {
-            SensorRule rule = strategy.generate(analysisDTO);
+            SensorRule rule = strategy.generate(createRequest);
             if (rule != null) {
                 SaveStatus status = sensorRuleService.saveSensorRule(rule);
                 if (status == SaveStatus.UPDATED) {
@@ -120,23 +88,33 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
 
         if (!generatedRules.isEmpty()) {
             SaveStatus overallStatus = anyUpdated ? SaveStatus.UPDATED : SaveStatus.NEW;
-            sendRuleGeneratedEvent(analysisDTO, overallStatus);
+            sendRuleGeneratedEvent(createRequest, overallStatus);
         }
     }
 
-    private void sendRuleGeneratedEvent(ThresholdAnalysisDTO dataDTO, SaveStatus status) {
+    private void validateRequiredFields(RuleCreateRequest request) {
+        if (StringUtils.isBlank(request.getGatewayId().toString()) ||
+                StringUtils.isBlank(request.getSensorId()) ||
+                StringUtils.isBlank(request.getDepartmentId()) ||
+                StringUtils.isBlank(request.getDataTypeEnName()) ||
+                StringUtils.isBlank(request.getDataTypeKrName())) {
+            throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
+        }
+    }
+
+    private void sendRuleGeneratedEvent(RuleCreateRequest createRequest, SaveStatus status) {
         String eventDetail = String.format(EVENT_DETAIL_TEMPLATE,
-                    dataDTO.getSensorId(),
-                    dataDTO.getDataTypeKrName(),
+                    createRequest.getSensorId(),
+                    createRequest.getDataTypeKrName(),
                     status.getDesc()
         );
 
         ViolatedRuleEventDTO eventDTO = new ViolatedRuleEventDTO(
                 EventLevel.INFO,
                 eventDetail,
-                dataDTO.getSensorId(),
+                createRequest.getSensorId(),
                 SOURCE_TYPE,
-                gatewayAdapter.getDepartmentIdByGatewayId(dataDTO.getGatewayId()),
+                createRequest.getDepartmentId(),
                 LocalDateTime.now()
         );
 

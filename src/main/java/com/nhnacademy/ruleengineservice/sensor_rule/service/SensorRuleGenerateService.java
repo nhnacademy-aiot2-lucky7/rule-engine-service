@@ -1,9 +1,7 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service;
 
-import com.nhnacademy.ruleengineservice.threshold.dto.ThresholdAnalysisDTO;
-
-import java.util.List;
+import com.nhnacademy.ruleengineservice.dashboard.dto.RuleCreateRequest;
 
 public interface SensorRuleGenerateService {
-    void generateRules(List<ThresholdAnalysisDTO> analysisDTOList);
+    void generateRules(RuleCreateRequest createRequest);
 }
