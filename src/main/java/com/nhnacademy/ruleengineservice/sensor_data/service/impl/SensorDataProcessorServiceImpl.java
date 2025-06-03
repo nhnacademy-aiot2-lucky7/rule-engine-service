@@ -1,7 +1,6 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
-import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
 import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;

@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class DashboardControllerIntegrationTest {
+class DashboardControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
