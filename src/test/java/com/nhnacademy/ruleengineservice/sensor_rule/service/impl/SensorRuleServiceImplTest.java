@@ -38,6 +38,7 @@ class SensorRuleServiceImplTest {
         sensorRule = SensorRule.builder()
                 .gatewayId(1L)
                 .sensorId("sensor1")
+                .departmentId("부서1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
                 .ruleType(RuleType.MAX)
@@ -82,7 +83,7 @@ class SensorRuleServiceImplTest {
         assertThatThrownBy(() ->
                 sensorRuleService.getSensorRule(1L, "sensor1", "temperature", RuleType.MAX)
         ).isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: gateway1, Sensor: sensor1, DataType: temperature");
+                .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: 1, Sensor: sensor1, DataType: temperature");
     }
 
     @Test
@@ -105,7 +106,7 @@ class SensorRuleServiceImplTest {
         assertThatThrownBy(() ->
                 sensorRuleService.updateSensorRule(sensorRule)
         ).isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: gateway1, Sensor: sensor1, DataType: temperature");
+                .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: 1, Sensor: sensor1, DataType: temperature");
     }
 
     @Test
@@ -130,6 +131,6 @@ class SensorRuleServiceImplTest {
         assertThatThrownBy(() ->
                 sensorRuleService.deleteSensorRule(1L, "sensor1", "temperature", RuleType.MAX)
         ).isInstanceOf(NotFoundException.class)
-                .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: gateway1, Sensor: sensor1, DataType: temperature");
+                .hasMessageContaining("해당 센서 룰을 찾을 수 없습니다. - Gateway: 1, Sensor: sensor1, DataType: temperature");
     }
 }

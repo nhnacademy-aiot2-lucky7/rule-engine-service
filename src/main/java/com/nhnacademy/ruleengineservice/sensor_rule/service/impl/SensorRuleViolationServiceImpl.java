@@ -21,7 +21,7 @@ public class SensorRuleViolationServiceImpl implements SensorRuleViolationServic
 
     public List<SensorRule> getViolatedRules(DataDTO dataDTO) {
         List<SensorRule> violatedRules = new ArrayList<>();
-        List<RuleType> ruleTypes = List.of(RuleType.MAX, RuleType.MIN, RuleType.AVG);
+        List<RuleType> ruleTypes = List.of(RuleType.MAX, RuleType.MIN);
 
         for (RuleType ruleType : ruleTypes) {
             SensorRule rule = sensorRuleService.getSensorRule(

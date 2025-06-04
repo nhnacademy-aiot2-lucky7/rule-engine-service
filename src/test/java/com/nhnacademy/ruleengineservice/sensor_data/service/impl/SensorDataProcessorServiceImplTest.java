@@ -6,7 +6,6 @@ import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
 import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
-import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
@@ -36,9 +35,6 @@ class SensorDataProcessorServiceImplTest {
 
     @Mock
     private EventProducer eventProducer;
-
-    @Mock
-    private GatewayAdapter gatewayAdapter;
 
     @InjectMocks
     private SensorDataProcessorServiceImpl processorService;
@@ -72,6 +68,7 @@ class SensorDataProcessorServiceImplTest {
         SensorRule sensorRule1 = SensorRule.builder()
                 .gatewayId(1L)
                 .sensorId("sensor1")
+                .departmentId("부서1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
                 .ruleType(RuleType.MIN)
@@ -81,7 +78,6 @@ class SensorDataProcessorServiceImplTest {
                 .build();
 
         when(violationChecker.getViolatedRules(any(DataDTO.class))).thenReturn(List.of(sensorRule1));
-        when(gatewayAdapter.getDepartmentIdByGatewayId(any(Long.class))).thenReturn("department1");
 
         processorService.process(dataDTO);
 
@@ -96,7 +92,7 @@ class SensorDataProcessorServiceImplTest {
                     assertEquals("센서 [sensor1]의 [온도]데이터에 대한 MIN 룰 위반: 데이터값 40.00은(는) 50.00미만이므로 알림전송.", sentMessage.getEventDetails());
                     assertEquals("sensor1", sentMessage.getSourceId());
                     assertEquals("센서", sentMessage.getSourceType());
-                    assertEquals("department1", sentMessage.getDepartmentId());
+                    assertEquals("부서1", sentMessage.getDepartmentId());
                     assertNotNull(sentMessage.getEventAt());
                 }
         );

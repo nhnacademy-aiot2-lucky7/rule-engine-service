@@ -26,6 +26,9 @@ public class SensorRule {
     private String sensorId;
 
     @NotNull
+    private String departmentId;
+
+    @NotNull
     private String dataTypeEnName; // 예: 온도, 습도 등
 
     @NotNull
@@ -44,7 +47,7 @@ public class SensorRule {
     private Double value; // 기준 값
 
     private Double minValue; // 기준 값의 최소값 (선택적)
-    
+
     private Double maxValue; // 기준 값의 최대값 (선택적)
 
     // 센서 룰의 Redis 키를 생성하는 메소드

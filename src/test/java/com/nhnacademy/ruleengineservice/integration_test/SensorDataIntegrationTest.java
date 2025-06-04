@@ -7,7 +7,6 @@ import com.nhnacademy.ruleengineservice.enums.Operator;
 import com.nhnacademy.ruleengineservice.enums.RuleType;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
 import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
-import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
@@ -43,9 +42,6 @@ class SensorDataIntegrationTest {
     private RedisTemplate<String, SensorRule> redisTemplate;
 
     @MockitoBean
-    private GatewayAdapter gatewayAdapter;
-
-    @MockitoBean
     private EventProducer eventProducer;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -53,6 +49,7 @@ class SensorDataIntegrationTest {
     private final Long gatewayId = 1L;
     private final String sensorId1 = "sensor-001";
     private final String sensorId2 = "sensor-002";
+    private final String departmentId = "부서1";
     private final String dataTypeEnName = "temperature";
     private final String dataTypeKrName = "온도";
 
@@ -61,6 +58,7 @@ class SensorDataIntegrationTest {
         SensorRule minRule1 = SensorRule.builder()
                 .gatewayId(gatewayId)
                 .sensorId(sensorId1)
+                .departmentId(departmentId)
                 .dataTypeEnName(dataTypeEnName)
                 .dataTypeKrName(dataTypeKrName)
                 .ruleType(RuleType.MIN)
@@ -72,6 +70,7 @@ class SensorDataIntegrationTest {
         SensorRule maxRule1 = SensorRule.builder()
                 .gatewayId(gatewayId)
                 .sensorId(sensorId1)
+                .departmentId(departmentId)
                 .dataTypeEnName(dataTypeEnName)
                 .dataTypeKrName(dataTypeKrName)
                 .ruleType(RuleType.MAX)
@@ -80,22 +79,10 @@ class SensorDataIntegrationTest {
                 .value(40.00)
                 .build();
 
-        SensorRule avgRule1 = SensorRule.builder()
-                .gatewayId(gatewayId)
-                .sensorId(sensorId1)
-                .dataTypeEnName(dataTypeEnName)
-                .dataTypeKrName(dataTypeKrName)
-                .ruleType(RuleType.AVG)
-                .operator(Operator.OUT_OF_BOUND)
-                .action(ActionType.SEND_ALERT)
-                .value(25.00)
-                .minValue(8.00)
-                .maxValue(40.00)
-                .build();
-
         SensorRule minRule2 = SensorRule.builder()
                 .gatewayId(gatewayId)
                 .sensorId(sensorId2)
+                .departmentId(departmentId)
                 .dataTypeEnName(dataTypeEnName)
                 .dataTypeKrName(dataTypeKrName)
                 .ruleType(RuleType.MIN)
@@ -107,6 +94,7 @@ class SensorDataIntegrationTest {
         SensorRule maxRule2 = SensorRule.builder()
                 .gatewayId(gatewayId)
                 .sensorId(sensorId2)
+                .departmentId(departmentId)
                 .dataTypeEnName(dataTypeEnName)
                 .dataTypeKrName(dataTypeKrName)
                 .ruleType(RuleType.MAX)
@@ -115,35 +103,18 @@ class SensorDataIntegrationTest {
                 .value(40.00)
                 .build();
 
-        SensorRule avgRule2 = SensorRule.builder()
-                .gatewayId(gatewayId)
-                .sensorId(sensorId2)
-                .dataTypeEnName(dataTypeEnName)
-                .dataTypeKrName(dataTypeKrName)
-                .ruleType(RuleType.AVG)
-                .operator(Operator.OUT_OF_BOUND)
-                .action(ActionType.SEND_ALERT)
-                .value(25.00)
-                .minValue(10.00)
-                .maxValue(40.00)
-                .build();
-
         sensorRuleService.saveSensorRule(minRule1);
         sensorRuleService.saveSensorRule(maxRule1);
-        sensorRuleService.saveSensorRule(avgRule1);
         sensorRuleService.saveSensorRule(minRule2);
         sensorRuleService.saveSensorRule(maxRule2);
-        sensorRuleService.saveSensorRule(avgRule2);
     }
 
     @AfterEach
     void cleanUp() {
         sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, RuleType.MIN);
         sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, RuleType.MAX);
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId1, dataTypeEnName, RuleType.AVG);
         sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, RuleType.MIN);
         sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, RuleType.MAX);
-        sensorRuleService.deleteSensorRule(gatewayId, sensorId2, dataTypeEnName, RuleType.AVG);
     }
 
     @Test
@@ -157,8 +128,6 @@ class SensorDataIntegrationTest {
                 20250520L
         );
 
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-
         mockMvc.perform(post("/rule_engine/data")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(data)))
@@ -168,7 +137,7 @@ class SensorDataIntegrationTest {
     }
 
     @Test
-    @DisplayName("실시간 데이터가 들어왔을 때 룰 판단 - MAX, AVG 룰 위반일 경우")
+    @DisplayName("실시간 데이터가 들어왔을 때 룰 판단 - MAX 룰 위반일 경우")
     void whenDataViolatesMaxAndAvgRules_thenSendTwoEvents() throws Exception {
         DataDTO data = new DataDTO(
                 gatewayId,
@@ -178,24 +147,18 @@ class SensorDataIntegrationTest {
                 20250520L
         );
 
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-
         mockMvc.perform(post("/rule_engine/data")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(data)))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<ViolatedRuleEventDTO> eventCaptor = ArgumentCaptor.forClass(ViolatedRuleEventDTO.class);
-        verify(eventProducer, times(2)).sendEvent(eventCaptor.capture());
+        verify(eventProducer, times(1)).sendEvent(eventCaptor.capture());
 
         var capturedEvents = eventCaptor.getAllValues();
 
         Assertions.assertAll(
-                () -> assertThat(capturedEvents).hasSize(2),
-                () -> assertThat(capturedEvents).anySatisfy(event ->
-                        assertThat(event.getEventDetails()).contains(
-                                "센서 [sensor-001]의 [온도]데이터에 대한 AVG 룰 위반: 데이터값 41.00은(는) 8.00~40.00 범위를 벗어났으므로 알림전송.")
-                ),
+                () -> assertThat(capturedEvents).hasSize(1),
                 () -> assertThat(capturedEvents).anySatisfy(event ->
                         assertThat(event.getEventDetails()).contains(
                                 "센서 [sensor-001]의 [온도]데이터에 대한 MAX 룰 위반: 데이터값 41.00은(는) 40.00을(를) 초과하였으므로 알림전송.")
@@ -205,7 +168,7 @@ class SensorDataIntegrationTest {
                         assertThat(event.getEventLevel()).isEqualTo(EventLevel.WARN);
                         assertThat(event.getSourceId()).isEqualTo("sensor-001");
                         assertThat(event.getSourceType()).isEqualTo("센서");
-                        assertThat(event.getDepartmentId()).isEqualTo("1");
+                        assertThat(event.getDepartmentId()).isEqualTo("부서1");
                     }
                 }
         );
@@ -226,8 +189,6 @@ class SensorDataIntegrationTest {
             testDataList.add(data);
         }
 
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-
         for (DataDTO data : testDataList) {
             mockMvc.perform(post("/rule_engine/data")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -239,7 +200,7 @@ class SensorDataIntegrationTest {
     }
 
     @Test
-    @DisplayName("10개의 실시간 데이터가 순차적으로 들어왔을 때 룰 판단 - MAX, AVG 룰 위반일 경우")
+    @DisplayName("10개의 실시간 데이터가 순차적으로 들어왔을 때 룰 판단 - MAX 룰 위반일 경우")
     void whenManyDataViolatesMaxAndAvgRules_thenSendTwoEvents() throws Exception{
         List<DataDTO> testDataList = new ArrayList<>();
         for (int i=0; i <= 9; i++) {
@@ -253,8 +214,6 @@ class SensorDataIntegrationTest {
             testDataList.add(data);
         }
 
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-
         for (DataDTO data : testDataList) {
             mockMvc.perform(post("/rule_engine/data")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -262,7 +221,7 @@ class SensorDataIntegrationTest {
                     .andExpect(status().isOk());
         }
 
-        verify(eventProducer, times(20)).sendEvent(any());
+        verify(eventProducer, times(10)).sendEvent(any());
     }
 
     @Test
@@ -288,9 +247,6 @@ class SensorDataIntegrationTest {
             testDataList.add(data2);
         }
 
-
-
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
         for (int i=0; i<1; i++) {
             for (DataDTO data : testDataList) {
                 mockMvc.perform(post("/rule_engine/data")
@@ -326,8 +282,6 @@ class SensorDataIntegrationTest {
             testDataList.add(data2);
         }
 
-        when(gatewayAdapter.getDepartmentIdByGatewayId(gatewayId)).thenReturn("1");
-
         for (int i=0; i<1; i++) {
             for (DataDTO data : testDataList) {
                 mockMvc.perform(post("/rule_engine/data")
@@ -337,7 +291,7 @@ class SensorDataIntegrationTest {
             }
         }
 
-        verify(eventProducer, times(40)).sendEvent(any());
+        verify(eventProducer, times(20)).sendEvent(any());
     }
 
     @Test

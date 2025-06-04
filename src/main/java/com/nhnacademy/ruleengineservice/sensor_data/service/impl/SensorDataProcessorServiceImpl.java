@@ -1,14 +1,12 @@
 package com.nhnacademy.ruleengineservice.sensor_data.service.impl;
 
-import com.nhnacademy.ruleengineservice.enums.RuleType;
-import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
-import com.nhnacademy.ruleengineservice.gateway.adapter.GatewayAdapter;
-import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
-import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
+import com.nhnacademy.ruleengineservice.event.producer.EventProducer;
 import com.nhnacademy.ruleengineservice.sensor_data.dto.DataDTO;
 import com.nhnacademy.ruleengineservice.sensor_data.service.SensorDataProcessorService;
+import com.nhnacademy.ruleengineservice.sensor_rule.domain.SensorRule;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleViolationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,6 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
 
     private final SensorRuleViolationService violationService;
     private final EventProducer eventProducer;
-    private final GatewayAdapter gatewayAdapter;
 
     /**
      * 센서 데이터를 처리하고 룰 위반 여부를 체크합니다.
@@ -42,11 +39,9 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
 
             if (!violatedRules.isEmpty()) {
                 for (SensorRule violatedRule : violatedRules) {
-                    String eventDetail = (violatedRule.getRuleType().equals(RuleType.AVG))
-                            ? createAVGEventDetail(dataDTO, violatedRule)
-                            : createEventDetail(dataDTO, violatedRule);
+                    String eventDetail = createEventDetail(dataDTO, violatedRule);
 
-                    ViolatedRuleEventDTO dto = toEventDTO(dataDTO, eventDetail);
+                    ViolatedRuleEventDTO dto = toEventDTO(dataDTO, eventDetail, violatedRule.getDepartmentId());
                     eventProducer.sendEvent(dto);
                 }
 
@@ -73,26 +68,13 @@ public class SensorDataProcessorServiceImpl implements SensorDataProcessorServic
         );
     }
 
-    private String createAVGEventDetail(DataDTO dataDTO, SensorRule violatedRule) {
-        return String.format("센서 [%s]의 [%s]데이터에 대한 %s 룰 위반: 데이터값 %.2f은(는) %.2f~%.2f %s %s.",
-                dataDTO.getSensorId(),
-                violatedRule.getDataTypeKrName(),
-                violatedRule.getRuleType(),
-                dataDTO.getValue(),
-                violatedRule.getMinValue(),
-                violatedRule.getMaxValue(),
-                violatedRule.getOperator().getDescription(),
-                violatedRule.getAction().getDesc()
-        );
-    }
-
-    private ViolatedRuleEventDTO toEventDTO(DataDTO dataDTO, String eventDetail) {
+    private ViolatedRuleEventDTO toEventDTO(DataDTO dataDTO, String eventDetail, String departmentId) {
         return new ViolatedRuleEventDTO(
                 EventLevel.WARN,
                 eventDetail,
                 dataDTO.getSensorId(),
                 "센서",
-                gatewayAdapter.getDepartmentIdByGatewayId(dataDTO.getGatewayId()),
+                departmentId,
                 LocalDateTime.now()
         );
     }

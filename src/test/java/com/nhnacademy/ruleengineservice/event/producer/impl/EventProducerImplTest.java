@@ -2,7 +2,6 @@ package com.nhnacademy.ruleengineservice.event.producer.impl;
 
 import com.nhnacademy.ruleengineservice.enums.EventLevel;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,7 +11,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.time.LocalDateTime;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
