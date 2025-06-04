@@ -32,13 +32,13 @@ class SensorRuleViolationServiceImplTest {
 
     private SensorRule maxRule;
     private SensorRule minRule;
-    private SensorRule avgRule;
 
     @BeforeEach
     void setUp() {
         minRule = SensorRule.builder()
                 .gatewayId(1L)
                 .sensorId("sensor1")
+                .departmentId("부서1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
                 .ruleType(RuleType.MIN)
@@ -50,24 +50,12 @@ class SensorRuleViolationServiceImplTest {
         maxRule = SensorRule.builder()
                 .gatewayId(1L)
                 .sensorId("sensor1")
+                .departmentId("부서1")
                 .dataTypeEnName("temperature")
                 .dataTypeKrName("온도")
                 .ruleType(RuleType.MAX)
                 .operator(Operator.GREATER_THAN)
                 .value(30.0)
-                .action(ActionType.LOG_WARNING)
-                .build();
-
-        avgRule = SensorRule.builder()
-                .gatewayId(1L)
-                .sensorId("sensor1")
-                .dataTypeEnName("temperature")
-                .dataTypeKrName("온도")
-                .ruleType(RuleType.AVG)
-                .operator(Operator.OUT_OF_BOUND)
-                .value(25.0)
-                .minValue(20.0)
-                .maxValue(30.0)
                 .action(ActionType.LOG_WARNING)
                 .build();
     }
@@ -90,12 +78,11 @@ class SensorRuleViolationServiceImplTest {
 
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MIN)).thenReturn(minRule);
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MAX)).thenReturn(maxRule);
-        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.AVG)).thenReturn(avgRule);
 
         List<SensorRule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
         assertThat(violatedRules).isEmpty();
-        verify(sensorRuleService, times(3)).getSensorRule(anyLong(), anyString(), anyString(), any());
+        verify(sensorRuleService, times(2)).getSensorRule(anyLong(), anyString(), anyString(), any());
     }
 
 
@@ -117,12 +104,11 @@ class SensorRuleViolationServiceImplTest {
 
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MIN)).thenReturn(minRule);
         when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.MAX)).thenReturn(maxRule);
-        when(sensorRuleService.getSensorRule(gatewayId, sensorId, dataType, RuleType.AVG)).thenReturn(avgRule);
 
         List<SensorRule> violatedRules = sensorRuleViolationService.getViolatedRules(dataDTO);
 
-        assertThat(violatedRules).containsExactlyInAnyOrder(maxRule, avgRule);
-        verify(sensorRuleService, times(3)).getSensorRule(anyLong(), anyString(), anyString(), any());
+        assertThat(violatedRules).containsExactlyInAnyOrder(maxRule);
+        verify(sensorRuleService, times(2)).getSensorRule(anyLong(), anyString(), anyString(), any());
     }
 
     @Test

@@ -1,3 +1,0 @@
-### gateway-id로 department-id 받기
-GET http://gateway-service:10241/gateways/gateway001/department-id
-

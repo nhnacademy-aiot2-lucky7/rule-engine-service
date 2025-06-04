@@ -52,7 +52,7 @@ class SensorDataControllerTest {
         verify(processorService).process(dataCaptor.capture());
 
         DataDTO captorRequest = dataCaptor.getValue();
-        assertEquals("gateway-01", captorRequest.getGatewayId());
+        assertEquals(1L, captorRequest.getGatewayId());
         assertEquals("sensor-01", captorRequest.getSensorId());
         assertEquals("temperature", captorRequest.getDataType());
         assertEquals(40.00, captorRequest.getValue());

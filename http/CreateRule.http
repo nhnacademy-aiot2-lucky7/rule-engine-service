@@ -1,0 +1,13 @@
+### dashboard service에서 정보를 받아 룰 생성
+POST http://localhost:10245/rule_engine/rules/create_rule
+Content-Type: application/json
+
+{
+  "gateway_id": 1,
+  "sensor_id": "sensor-001",
+  "department_id": "부서1",
+  "type_en_name": "temperature",
+  "type_kr_name": "온도",
+  "threshold_min": 20.00,
+  "threshold_max": 40.00
+}
