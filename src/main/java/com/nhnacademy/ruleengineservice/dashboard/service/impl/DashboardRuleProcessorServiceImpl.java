@@ -19,6 +19,7 @@ public class DashboardRuleProcessorServiceImpl implements DashboardRuleProcessor
     public void generateRulesFromCreateDto(RuleCreateRequest request) {
         try {
             sensorRuleGenerateService.generateRules(request);
+            log.info("generateRulesFromCreateDto 통과");
         } catch (SensorRuleCreationException e) {
             log.error("룰 생성 실패.");
             throw e;
