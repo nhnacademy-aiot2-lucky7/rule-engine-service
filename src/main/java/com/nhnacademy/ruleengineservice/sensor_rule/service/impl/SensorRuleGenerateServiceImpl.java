@@ -1,6 +1,6 @@
 package com.nhnacademy.ruleengineservice.sensor_rule.service.impl;
 
-import com.nhnacademy.ruleengineservice.common.exception.SensorRuleCreationException;
+import com.nhnacademy.ruleengineservice.common.exception.SensorRuleException;
 import com.nhnacademy.ruleengineservice.dashboard.dto.RuleCreateRequest;
 import com.nhnacademy.ruleengineservice.enums.*;
 import com.nhnacademy.ruleengineservice.event.dto.ViolatedRuleEventDTO;
@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -93,12 +94,13 @@ public class SensorRuleGenerateServiceImpl implements SensorRuleGenerateService 
     }
 
     private void validateRequiredFields(RuleCreateRequest request) {
-        if (StringUtils.isBlank(request.getGatewayId().toString()) ||
+        if (Objects.isNull(request.getGatewayId()) ||
+                StringUtils.isBlank(request.getGatewayId().toString()) ||
                 StringUtils.isBlank(request.getSensorId()) ||
                 StringUtils.isBlank(request.getDepartmentId()) ||
                 StringUtils.isBlank(request.getDataTypeEnName()) ||
                 StringUtils.isBlank(request.getDataTypeKrName())) {
-            throw new SensorRuleCreationException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
+            throw new SensorRuleException(SENSOR_RULE_CREATION_MISSING_REQUIRED);
         }
     }
 

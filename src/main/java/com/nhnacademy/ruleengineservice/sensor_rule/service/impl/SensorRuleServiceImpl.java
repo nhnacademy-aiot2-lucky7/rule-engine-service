@@ -72,6 +72,19 @@ public class SensorRuleServiceImpl implements SensorRuleService {
         log.info("Deleted sensor rule: {}", key);
     }
 
+    @Override
+    public void deleteSensorAllRules(Long gatewayId, String sensorId, String dataType) {
+        for (RuleType ruleType: RuleType.values()) {
+            String key = generateKey(gatewayId, sensorId, dataType, ruleType);
+            Boolean deleted = redisTemplate.delete(key);
+
+            if (Boolean.FALSE.equals(deleted)) {
+                throw new NotFoundException(String.format(EXCEPTION_MESSAGE, gatewayId, sensorId, dataType));
+            }
+        }
+        log.info("Deleted all rules for gatewayId={}, sensorId={}, dataType={}", gatewayId, sensorId, dataType);
+    }
+
     private static String generateKey(Long gatewayId, String sensorId, String dataType, RuleType ruleType) {
         return String.format("rule:gateway:%s:sensor:%s:%s:%s", gatewayId, sensorId, dataType, ruleType);
     }

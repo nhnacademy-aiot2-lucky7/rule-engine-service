@@ -1,8 +1,11 @@
 package com.nhnacademy.ruleengineservice.dashboard.service.impl;
 
-import com.nhnacademy.ruleengineservice.common.exception.SensorRuleCreationException;
+import com.nhnacademy.ruleengineservice.common.exception.SensorRuleException;
 import com.nhnacademy.ruleengineservice.dashboard.dto.RuleCreateRequest;
+import com.nhnacademy.ruleengineservice.dashboard.dto.RuleDeleteRequest;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleDeleteService;
 import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleGenerateService;
+import com.nhnacademy.ruleengineservice.sensor_rule.service.SensorRuleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,10 +22,14 @@ class DashboardRuleProcessorServiceImplTest {
     @Mock
     private SensorRuleGenerateService sensorRuleGenerateService;
 
+    @Mock
+    private SensorRuleDeleteService sensorRuleDeleteService;
+
     @InjectMocks
     private DashboardRuleProcessorServiceImpl dashboardRuleProcessorService;
 
     private RuleCreateRequest createRequest;
+    private RuleDeleteRequest deleteRequest;
 
     @BeforeEach
     void setUp() {
@@ -35,6 +42,13 @@ class DashboardRuleProcessorServiceImplTest {
         createRequest.setDataTypeKrName("온도");
         createRequest.setThresholdMin(10.00);
         createRequest.setThresholdMax(40.00);
+
+        deleteRequest = new RuleDeleteRequest();
+        deleteRequest.setGatewayId(1L);
+        deleteRequest.setSensorId("sensor1");
+        deleteRequest.setDepartmentId("부서1");
+        deleteRequest.setDataTypeEnName("temperature");
+        deleteRequest.setDataTypeKrName("온도");
     }
 
     @Test
@@ -48,18 +62,44 @@ class DashboardRuleProcessorServiceImplTest {
     }
 
     @Test
-    @DisplayName("generateRulesFromCreateDto 예외 발생 시 SensorRuleCreationException 다시 throw")
+    @DisplayName("generateRulesFromCreateDto 예외 발생 시 SensorRuleException 다시 throw")
     void generateRulesFromCreateDto_exceptionThrown() {
         // given
-        doThrow(new SensorRuleCreationException("룰 생성 실패")).when(sensorRuleGenerateService).generateRules(createRequest);
+        doThrow(new SensorRuleException("룰 생성 실패")).when(sensorRuleGenerateService).generateRules(createRequest);
 
         // when + then
-        SensorRuleCreationException thrown = assertThrows(
-                SensorRuleCreationException.class,
+        SensorRuleException thrown = assertThrows(
+                SensorRuleException.class,
                 () -> dashboardRuleProcessorService.generateRulesFromCreateDto(createRequest)
         );
 
         assertEquals("룰 생성 실패", thrown.getMessage());
         verify(sensorRuleGenerateService, times(1)).generateRules(createRequest);
+    }
+
+    @Test
+    @DisplayName("deleteRulesFromCreateDto 정상 수행")
+    void deleteRulesFromDeleteDto_success() {
+        // given + when
+        dashboardRuleProcessorService.deleteRulesFromDeleteDto(deleteRequest);
+
+        // then
+        verify(sensorRuleDeleteService, times(1)).deleteRules(deleteRequest);
+    }
+
+    @Test
+    @DisplayName("deleteRulesFromDeleteDto 예외 발생 시 SensorRuleException 다시 throw")
+    void deleteRulesFromDeleteDto_exceptionThrown() {
+        // given
+        doThrow(new SensorRuleException("룰 삭제 실패")).when(sensorRuleDeleteService).deleteRules(deleteRequest);
+
+        // when + then
+        SensorRuleException thrown = assertThrows(
+                SensorRuleException.class,
+                () -> dashboardRuleProcessorService.deleteRulesFromDeleteDto(deleteRequest)
+        );
+
+        assertEquals("룰 삭제 실패", thrown.getMessage());
+        verify(sensorRuleDeleteService, times(1)).deleteRules(deleteRequest);
     }
 }
