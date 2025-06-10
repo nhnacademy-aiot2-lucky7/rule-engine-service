@@ -2,6 +2,7 @@ package com.nhnacademy.ruleengineservice.common.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.ruleengineservice.dashboard.dto.RuleCreateRequest;
+import com.nhnacademy.ruleengineservice.dashboard.dto.RuleDeleteRequest;
 import com.nhnacademy.ruleengineservice.dashboard.service.DashboardRuleProcessorService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,4 +46,19 @@ class DashboardControllerTest {
                 .andExpect(status().isCreated());
     }
 
+    @Test
+    @DisplayName("룰 삭제 - 성공")
+    void testDeleteRule() throws Exception{
+        RuleDeleteRequest request = new RuleDeleteRequest();
+        request.setGatewayId(1L);
+        request.setSensorId("sensor-001");
+        request.setDepartmentId("부서1");
+        request.setDataTypeEnName("temperature");
+        request.setDataTypeKrName("온도");
+
+        mockMvc.perform(delete("/rule_engine/rules/delete_rule")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isNoContent());
+    }
 }
